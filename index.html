@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title id="page-title">ระบบสารสนเทศโรงเรียน</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sarabun',sans-serif;background:#f0f2f5;font-size:13px;color:#222}
+:root{--b:#1a5276;--b2:#2471a3;--b3:#d6eaf8;--b4:#eaf4fb;--g:#1e8449;--g3:#d5f5e3;--o:#e67e22;--o3:#fef9e7;--r:#c0392b;--r3:#fdedec;--gy:#7f8c8d;--gy2:#bdc3c7;--gy3:#f0f2f5;--bdr:#e0e0e0}
+/* HEADER */
+.hdr{background:linear-gradient(135deg,#0d2b45,#1a5276 60%,#2471a3);color:#fff;position:sticky;top:0;z-index:200;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.hdr-top{display:flex;align-items:center;gap:12px;padding:10px 20px}
+.logo-c{width:52px;height:52px;border-radius:50%;background:#fff;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.logo-c img{width:48px;height:48px;object-fit:contain}
+.sch-info{flex:1;min-width:0}
+.sch-info h1{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sch-info p{font-size:11px;opacity:.8;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hdr-acts{display:flex;gap:6px;flex-shrink:0}
+.hbtn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;padding:5px 11px;border-radius:20px;font-size:11px;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:.2s}
+.hbtn:hover{background:rgba(255,255,255,.25)}
+.hbtn.drive-on{background:rgba(52,168,83,.4);border-color:rgba(52,168,83,.7)}
+.nav{display:flex;overflow-x:auto;padding:0 20px;gap:0;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nv{display:flex;align-items:center;gap:5px;padding:9px 15px;color:rgba(255,255,255,.7);font-size:12px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:.2s;flex-shrink:0}
+.nv:hover{color:#fff;background:rgba(255,255,255,.07)}
+.nv.on{color:#fff;border-bottom-color:#f39c12;font-weight:600}
+/* MAIN */
+.main{padding:16px 20px;max-width:1200px;margin:0 auto}
+.pg{display:none}.pg.on{display:block}
+/* STAT GRID */
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:16px}
+.sc{background:#fff;border-radius:12px;padding:14px;border-left:4px solid var(--b);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.sc.g{border-left-color:var(--g)}.sc.o{border-left-color:var(--o)}.sc.r{border-left-color:var(--r)}
+.sc-lbl{font-size:10px;color:var(--gy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.sc-n{font-size:26px;font-weight:700}.sc-sub{font-size:10px;color:var(--gy2);margin-top:2px}
+/* CARD */
+.card{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin-bottom:14px;overflow:hidden}
+.ch{padding:12px 16px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
+.ch h3{font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px}
+.cb{padding:14px 16px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:640px){.two{grid-template-columns:1fr}}
+/* BUTTONS */
+.btn{border:1px solid var(--bdr);background:#fff;color:#222;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:5px;transition:.15s;white-space:nowrap}
+.btn:hover{background:var(--gy3)}
+.btn.p{background:var(--b);color:#fff;border-color:var(--b)}.btn.p:hover{background:var(--b2)}
+.btn.g{background:var(--g);color:#fff;border-color:var(--g)}
+.btn.r{background:var(--r);color:#fff;border-color:var(--r)}
+.btn.o{background:var(--o);color:#fff;border-color:var(--o)}
+.btn.sm{padding:4px 10px;font-size:11px}
+/* ANNOUNCE */
+.ai{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid #f5f5f5;align-items:flex-start}
+.ai:last-child{border:none}
+.abd{font-size:10px;padding:2px 8px;border-radius:10px;white-space:nowrap;flex-shrink:0;font-weight:600;margin-top:2px}
+.abd.n{background:var(--o3);color:#7d4a00}.abd.g{background:var(--b3);color:#0c447c}.abd.a{background:var(--g3);color:#27500a}.abd.v{background:#eaf3de;color:#3b6d11}
+.at{font-size:12px;font-weight:500;flex:1}.ad{font-size:10px;color:var(--gy);margin-top:1px}
+/* PROGRESS */
+.pb{background:#eee;border-radius:20px;height:14px;overflow:hidden;margin:5px 0}
+.pf{height:100%;border-radius:20px;background:var(--b);display:flex;align-items:center;padding-left:6px;transition:.4s}
+.pf span{font-size:9px;font-weight:700;color:#fff}
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{background:var(--b4);color:var(--b);padding:9px 10px;text-align:left;font-weight:600;font-size:11px}
+.tbl td{padding:8px 10px;border-bottom:1px solid #f5f5f5;vertical-align:middle}
+.tbl tr:hover td{background:#fafbfc}
+.bdg{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600}
+.bdg.b{background:var(--b3);color:#0c447c}.bdg.g{background:var(--g3);color:#27500a}.bdg.r{background:var(--r3);color:#791f1f}.bdg.o{background:var(--o3);color:#633806}
+/* CALENDAR */
+.ctb{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.vtabs{display:flex;border:1px solid var(--bdr);border-radius:8px;overflow:hidden}
+.vt{padding:5px 12px;font-size:12px;cursor:pointer;background:#fff;color:var(--gy);border:none;transition:.15s}
+.vt.on{background:var(--b);color:#fff}
+.csel select{border:1px solid var(--bdr);border-radius:8px;padding:5px 8px;font-size:12px;outline:none;cursor:pointer;background:#fff}
+.cgm{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cdnh{text-align:center;font-size:10px;font-weight:600;color:var(--gy);padding:5px}
+.cd{min-height:54px;background:#fff;border-radius:5px;padding:3px 5px;border:1px solid var(--bdr);cursor:pointer;transition:.15s;position:relative}
+.cd:hover{border-color:var(--b2);background:var(--b4)}
+.cd.om{opacity:.35;pointer-events:none}.cd.td{border-color:var(--b);background:var(--b4)}.cd.sel{border-color:var(--b2);box-shadow:0 0 0 2px rgba(36,113,163,.2)}
+.dn{font-size:11px;font-weight:500}
+.evd{font-size:8px;margin-top:1px;padding:1px 3px;border-radius:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.es{background:#d5f5e3;color:#27500a}.eh{background:#fdedec;color:#791f1f}.em{background:#fef9e7;color:#633806}.ea{background:#d6eaf8;color:#0c447c}.eo{background:#1a5276;color:#fff}
+/* YEAR VIEW */
+.ygrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:12px}
+.ymc{background:#fff;border-radius:10px;border:1px solid var(--bdr);padding:10px;cursor:pointer;transition:.15s}
+.ymc:hover{border-color:var(--b2);background:var(--b4)}
+.ymt{font-size:12px;font-weight:600;color:var(--b);text-align:center;margin-bottom:7px}
+.ymg{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;font-size:9px}
+.ymdh{text-align:center;color:var(--gy);font-weight:600;padding:1px}
+.ymd{text-align:center;padding:2px 1px;border-radius:2px}
+.ymd.hev{background:var(--b3);color:var(--b);font-weight:600}.ymd.hhol{background:var(--r3);color:var(--r)}.ymd.hom{opacity:.35}.ymd.htd{background:var(--b);color:#fff}
+/* SUM BAR */
+.sb4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.sbox{background:#fff;border-radius:8px;padding:10px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.07)}
+.sbox .n{font-size:20px;font-weight:700;color:var(--b)}.sbox .l{font-size:10px;color:var(--gy);margin-top:1px}
+/* LEGEND */
+.leg{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.li{display:flex;align-items:center;gap:4px;font-size:10px;color:#555}
+.ld{width:10px;height:10px;border-radius:2px}
+/* EVENT PANEL */
+.epb{margin-top:12px;background:var(--b4);border-radius:8px;padding:12px}
+.epb h4{font-size:12px;font-weight:600;color:var(--b);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.er{display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:6px;padding:7px 10px;margin-bottom:5px;border:1px solid var(--bdr)}
+/* PERSONNEL */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+.pcard{background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:14px;text-align:center}
+.av{width:48px;height:48px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;overflow:hidden}
+.av img{width:100%;height:100%;object-fit:cover}
+.av.b{background:var(--b)}.av.g{background:var(--g)}.av.o{background:var(--o)}.av.r{background:var(--r)}
+.pn{font-size:12px;font-weight:600}.pr{font-size:10px;color:#666;margin-top:2px}.ps{font-size:10px;color:var(--b2);margin-top:1px}
+/* SEM */
+.sem{background:#fff;border-radius:10px;padding:14px;margin-bottom:12px;border-left:4px solid var(--b)}
+.sem.s2{border-left-color:var(--g)}
+/* UPLOAD */
+.upz{border:2px dashed var(--gy2);border-radius:10px;padding:22px;text-align:center;cursor:pointer;transition:.2s;margin-bottom:12px}
+.upz:hover,.upz.dg{border-color:var(--b);background:var(--b4)}
+/* FILE CHIP */
+.fc{background:#fff;border:1px solid var(--bdr);border-radius:7px;padding:7px 11px;display:flex;align-items:center;gap:8px;margin-bottom:6px}
+/* SUBMIT CARD */
+.subc{background:#fff;border-radius:8px;border:1px solid var(--bdr);padding:12px;margin-bottom:8px}
+.sf{display:flex;align-items:center;gap:4px;background:var(--b4);color:var(--b);padding:3px 8px;border-radius:5px;font-size:10px;text-decoration:none;cursor:pointer;border:none}
+.sf:hover{background:var(--b3)}
+/* FORM */
+.fg{display:flex;flex-direction:column;gap:3px;margin-bottom:10px}
+.fg label{font-size:11px;font-weight:600;color:#666}
+.fg input,.fg select,.fg textarea{border:1px solid var(--bdr);border-radius:8px;padding:7px 10px;font-size:12px;color:#222;outline:none;width:100%;background:#fff;transition:.2s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--b)}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+/* MODAL */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:none;align-items:center;justify-content:center;padding:16px}
+.ov.on{display:flex}
+.mbox{background:#fff;border-radius:14px;padding:22px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.25)}
+.mbox h3{font-size:14px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.mbts{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+/* INFO BAR */
+.ibar{border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;display:flex;align-items:flex-start;gap:8px}
+.ibar.warn{background:#fff3cd;border:1px solid #ffc107;color:#856404}
+.ibar.ok{background:#d4edda;border:1px solid #28a745;color:#155724}
+.ibar.info{background:var(--b4);border:1px solid var(--b3);color:#0c447c}
+/* CHIP */
+.chip{display:inline-flex;align-items:center;gap:3px;background:var(--b3);color:var(--b);padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600}
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--g);color:#fff;padding:11px 16px;border-radius:10px;font-size:12px;z-index:9999;opacity:0;transition:.3s;pointer-events:none;display:flex;align-items:center;gap:7px;box-shadow:0 4px 16px rgba(0,0,0,.2);max-width:320px}
+.toast.on{opacity:1}
+/* SAVE INDICATOR */
+.save-ind{position:fixed;bottom:20px;left:20px;background:var(--b);color:#fff;padding:8px 14px;border-radius:8px;font-size:11px;opacity:0;transition:.3s;z-index:9999;display:flex;align-items:center;gap:6px}
+.save-ind.on{opacity:1}
+/* RESOURCE LIBRARY */
+.port-fbtn.on{background:var(--b);color:#fff;border-color:var(--b)}
+.pri{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #f5f5f5;align-items:flex-start}
+.pri:last-child{border:none}
+.pri-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:17px;color:#fff}
+.pri-icon.cert{background:var(--o)}.pri-icon.form{background:var(--b)}.pri-icon.doc{background:var(--g)}.pri-icon.other{background:var(--gy)}
+.pri-body{flex:1;min-width:0}
+.pri-ttl{font-size:13px;font-weight:600}
+.pri-desc{font-size:11px;color:#666;margin-top:2px}
+.pri-meta{font-size:10px;color:var(--gy);margin-top:3px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.pri-cat{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px}
+.pri-cat.cert{background:var(--o3);color:#633806}.pri-cat.form{background:var(--b3);color:#0c447c}.pri-cat.doc{background:var(--g3);color:#27500a}.pri-cat.other{background:#eee;color:#555}
+.pri-acts{display:flex;gap:4px;flex-shrink:0;align-items:flex-start;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-top">
+    <div class="logo-c">
+      <img id="school-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAA4CAYAAAB+I+F7AAAUl0lEQVR42s2ZeXSc1Znmf/d+S+2lqpJKkrVbsmxsy/vWxsEbxgnGDkNj2SHgSUMYOgSykuQkmRBZyUnokKTpTkKHYTqkSc8AbRMgYNIxpMEQg41t8Io3bEu2JVl7qfaqb7vzBzk902cmwTTdfeb++937vs99l+e753nhA64ukAAPJszp/6Mh/EAXJH7/SXxQ2/KDGpgJQoEwTG3mtPrg57NQDYiu/x/ApRYgBahw2GxsrvG7yQpfAwK18t/A9gdNqY6A22Hq4eWTUumbp3qvLU6eBMJS/u+U/4evbaAhYBHUvr6w6kTu09PVpaevsgubW9U/zkk8DxhKvZvy/+iISSFgCdTsvjJ5uHRtkxp5Ypmj1GZ1aetc27quSe2YV/kUoH8QgPJfA+zbAm+aovL7C6p+s6wtOvvi5JDrmJqG61KImfpwU9BZ1x694dmZ8ceFQNCF+Nd07/s6oHjXkejG//L8yheWdySWnRbSmfyNNl0rK1TBQ1YZZM8XGX2w12kNoD+9f+znG09O3KY60cR2vHfNXN7S3g+4rV1I0Y337OzEox+qCa8bXlZp114/ycgezlEct7CEIn+qgJrwiG+olkNnCnaHx4LpCmvu7vKr2zrRth//dwC3DbTj1Yhl48Fr17ZG73Oun+SY9SHDmrAo7xjAOZKl2FNG7B3FSZURySCiPiC1kK5C/aXl4bT9D/VT3NSM44hXLjN6l11znZ2dbNqOO7PSf5O/Iaz0pjBKeWRfGMYz/YjFDehtSdSSRryUR2b3KL6IJkoNQa+hMWQuqvFdt2k77soVl+9TXnatbdvmdYf0u4t5Z7U5LyocHc3ZcYlAxkHMqyVc6yPeYBJqDsKcSYTeyVB4cQizMSBVU9ArZ9zb/yJsbly5C/dy+e9yNgkhUEII/9VzEt1LZ8bqhnuKnpdyhJ63cZNh/GENA5gYs/BbCi1q4CWCmGmL0iVLjg1aasPS5Mz5UyNfEAK1tavr355KokE9bRdQZkRDD+tYAR2RLeMAmIKKqIGrgXIUKmdjhU38CQPdL1CWUOGglvt347liwdV8a6pE+WAaL2VjfLQOR7hYpzJk0wpH08iUFO7pFHaNgf/aGgqH0siMjVyaEHbafl/+9MvdWANScz2KtsAyNSJDeULX1GDNjGLsvkQ5W6CoNEzXxj+cxbu+gWCViTVUIBcxCeZdeJ9/i8u+yRAULUd5wQYf0dsaSD03TOG1FCJu4vdLQqNZisMlKtI59LCBjOiknxigcL5E7NYGzIiG7ShHvA8SlpfBb1J5iC+b2rpE2Kixj6Q9hBBqfhynv4TQBZ7tYVUEqf7CfIqWQEhQloebdlCL46hRW1rv5FQ0bs6/FWZA92W9WN47cp0gBGp+XeiOSWEzUK71K2fcEmYAMhkPWfYojVtoK1pJLpmENa8eZ7iIshXZnIfPJ7DSjijX+b22oJlcUhe6RXTjzex87/T+QXCqC3lgwQJj03bcRycFPn/VvOSGvsqYK+OaJqRE2QpzdoDxXw3grW4jWhek9NAxEqsaKTUnmdg5SGhlDHuwjBHTsUOaHK2vctd0xL/8l1XmdZ0zUAcWYPyxGnxP9NdDrGtB5cCU2+f71bJG+n+0T7hVBv7GILppoAei1EyOofrG0GrCuJdyqCnVXDowgAxbFAYKuGNlzJKk/p7FrveTA9rRF8+dvPLQ+PT33a0KpADv75sjW3HJ99vueDioB9z2ChWbVSf831tB6XQarWATqAshkz4YL1M2qxg6laZmbjWaX9LS2YpzsUBpUgkV9xGakUD6Q9pYcxSfTvO9lYENs2P6Rwpl3vxEX/aRbaBtAvePRk4pJYQQ/G5J8sDS5sj8S2N5fNJU1vQmoSodKmqTRK5rQJ27QEaVSR3N4boKb9iGSw56mwlhDc0vqZwbJlQKQms9Y48coxgQyGNFzKFLWMqlrirI80fHf77+aOq2l1egr3rlXT5/L55TaG5K04Juzafv95TPbzipIvb5s+h6C+WzJ7i4Zz/BBj8tbVGIGKApnLdLODOC6JaHVrQ5fzTHWKlEnZiHz/9xDGnhu64JmQijek5Z3q/v15QmJy4rrQqElFKtg9p8xm5x0DS3tllwoQctHsJ/1WZU2uHMk8/RtNCHV0zw4O4CPfkCC0MaG6oMfHtK/PZ0mYGaALctTDJWHOLCzj4m37QF5fOw9uzDc8J4VQ26UkpmUuUlixNEV79KRoH4P3nwX3TrVhDf/KaSEXz+qmnJJtt1EbYlhM/EXHM1Kpvlwl99i9qpfZzsrWDZY0P8ZiDL0UKJnxxM4VstGZ4Be3qyPDOYZd1/H8YqV+KvPMnQgz9CNjZhLFuKQCGUi/BJGpc0Np8fx/W8Lin+2GNzl1KsWtWtvr66+f4lG69YaO07qaSMSeOqVYiRCbJv/pSxsd1Ek9V8+tUU313j42t3V7JlgZ/rcw7BhI6dclm9KMiWGyLUaC5PvVJi9VQ//UPHiKoAelUbBPyUn/ipsEu9bnLjnHD4dwPOlV95YZfa1ql1bz/+f0VOKIUQQvBAe2LJ0v88Y6NjSlwVEbKhFb26huGnf8Xg3lfpqEty6KzNzIRi+ZowjzyU4nt/n+ZsrcnEiSKVnuK3b5e550fjrFkRZlO7InvaY0pdhN7tD5HZcwCtvh4xqQ3L8gkzGdRWfWbeJ+5ULBCbtqvfN6n4Z3DbQApNqB9WR//rtX8+99W6ZZPihXQZXSJ8Ksvwtico+V+gdl4ttwxqfOvtNF+aYsCEy1OHS3x1RHDjL/MMeYJnT1lseAd2FgTFM2X2uIKPDJXoHvHTtCbCcO+jZJ59Br+eA9eV2YylZnS2T775U/Nf/1bQdxuaUNt+j0t0geyWwvuMp9q+8NMPn67qqJIjT57yIs1R2XdsgHD/GCpuMvWm2VzzXI4B26LKJwlq0JF1mBuTrNQV9UGBajY5c9bia3mNJkPxl7fHWHHfOK9XGKxKl1kTDfGlj2ic+ckRygENX3MtseYEVs52qze0aseeOju+5ju7W8eVymwVQsitqgs8pa3v7HhQecjcaNEJLJ4kxZQ4lQj6VISGdVPYfcZjX9Fi90yDsAaTPNiyNkRzvc7t44KvXlIs2WPz6yI8uc7PlFGb8z02j28M891smS8lJccn8pxPmQTWTiZV8hMzBMysQpsS00b7ck6kwkz87Jq2B4QQaua2TiGF6Pa2rZ58w8LO9g9PXMy55cGi7vl03IyFmigyHJEEJ/l5uqfE3XUa8ZtjVCpFJACzN1ewtygY82BuXLJf11g6zUcGwbdG4OXDJeoW+3nTho55Aeom6bx2pkz11BAjKPSxArbt4SIo9Ga1UsnzFmyaduv9dZGlnZ3bPAnQ+uGWO6IhVHWDjq8+SKQ5gl8qXk4m8bdGIGYwMuGwoE6DOj8/XB/i0Dmb/X+b4kudYfZtCZOokMSyLqfyimi7j12bw/zZsgD3/WCchqCgbn2URFjQP+Him2Qy3hrnzXCEhA7B1iiRppCoTHheU1NQdaxtvVMIofQvY7YnHfdDX9zWK4SnZPeoxUAsyEuDRfqlny2xAlTqLE36eKu/wA3PjjN0oswvPxbhtufzVF9wqXMV+qjNNyo1tr5lke4fp7XZ4MFdBWJByQ/uTWIN2Zw6a3PLjBCqRmeyT2en62PijUGWhTRk0ebuk3lt/jsl8fGkb/1maNT+4qNtnzhzRfX6HWnPCzdVyP80NsFjbpjFmTTLj/cRmp7AN+qwuDbEA0eKPLa3wLERl5u2xCgeLvHgGMSzLj+6K87Rcxa31GvUtZgUsx7rO0w2rgtz7GiZH/z1GDIc4M6FQazePHKkxFUHzzPW1kRqzKW9mOHxmqR4+GzBXT43GVyqkZZ2TXjFT84XwC/VwHCRfs8jO6+enGFwWjPQ6nWMeREeP10kHFQ8sD7Ed+6uhIhGMeuyvcqjpAmI64QKHrOWh1jxXxLMFR57T1j8+Y8n+OwTWW5e4EeaDnvPWZjLoqgKyduaTiASYPzKDkbGS6QnSlzdHBT3nskrWRNeLfsNrTXtKIZyrkjYHnpUEmxLsqe1naGwyXjGQRg6T18os6pZY+qfVSJTDm89NsGvNY0Z031UOwpsRV4TDB8skno+gyp6zK2UfG+Vn5e+nmD+55JUVAhevGgjTI2+jMe5yjBnZs6kbkoLQteJeh6GFEKhRJ+mtci8K2KtCcniJl20BwX6hINx9AJpB/qvqKUnpWDcoSjADEqcPotPPTzBwt0W6yZpGHUGRVeBhNGAZP0bNjtfzFFRbzA45HDLHovHXszjWgpHQF4T0FfmuOOjd0ojmQsjeCffIWGXiZqS8ykL24GyJiIS5QmUYsssgw/VCLKuYCKXIXauh8yaWeijDmRtGuMGr5+x0SOS+z6b4JmFBnfdFiM94WEDnoIcgr6ITkZB7IY4c66N8Hy/S9oDLePy5qBLW5UBvVmcYIyLM9oInDhMTz6HEhqeB1V1OrVRgeug9ARqoienGp4+Z6nWohCRvMfyfefoTVRhvH6Mtv3nGY073NZWx7LX8vzpLya49soA0+5MMHaoyOYdBaZX6siERrjscW8A4obAHrRxRl2em6Wx/o44+3ZkODYBj7ZoXNw1xKq+ixQNj9aSjXjpDUYNk3EX/rReMlKQeH1uSvryTu/0iMa8Kk0dLYNXYTIQNPHl8mw8NEHLVx4hq29genGEh6dVcOsRl1vvH8Mbcek5YzGcV2xd6OPIP+V56x2bZVHovDOB0WJStzbC+pti7P67FN/5bZmHF0TQz48il97L7A33cMuBk4wDmQofw2g4QcHRMVftH1Y0Sq9HVmaK+2odsIBZTTrBiMF4bYT+oI+jmo4nNJquv5VLpyezLj3CkfYQbVGT4pjNvM0Jzn4yzGsHi/zq+Rxd64P0pj1u/OwQ//SVAVRE4/DBInv2OPxsRoiOnktkcyuo//B1ZEfHOGgGOBcL4ksEOCQN4n4ISdTcoCQ+XtwrwydHd9aVHffnRxzNMxSPlXSiBcX+We28XGngDQ+BDm133UOhNoqcGGFWY5j7f5FCG7XYeaCEDEq+tj7EG4fKbFoR4sd3xJjTaCBOFRk7WWZjR4js6ADmoj+h6Y7P4A5fYswusaO1luMtjVSMWTyh+fHjsaBKl59swDuwe+A38rvvjL85x7IO+w1DXRp33ONBnaDUufLkCf5E1GDOXkj5zQOIK2bTMPMuxtNtXNPm4dPCfOzrQ3z+lE0mKjk3anP47SL7DxcpllzWnnT43DeHcbwg0WQZUVpE9arP4ZkC+/RpGpesYelQhqvPnCMSDdIYFyyqk+5Q2aD3aP7IF1O5N7TjoL5Q7Udvq9pw1La8zqmG3D4i+GI5x+y8H3v5DdB3HpXNoU+fR7htAb0v/YYb1hrUhcMEkFzs84ilNT6yoIL0gMcrh2yuqAtyy1VVdDRmGOnroOX2rSjdh3vwLUQ4gmv6WbjrMULVQV6qDLB4kuBIXnn1tqHV7uvvfvRsap9QqkuuFN3m9+9ZcuAbwfDMmF70mkO6fLnf4xdajKnzP05ZechCGXf0PFrTFRSe/iET3gh1axrwt4SgIQh48FYelkYh68JAnolTeVI7z1I1ez3arBVw8TRa03RcU6IN9nO0/1fc7BnUS5uvLtK9czm/rN03dnzi4TcX9KouS6gupPi28J5pTyyMbp750nc9LXxji0tPVonwhOTLZ85TStmUDB3TKmKIMPm44mIwwOCYBaEA7QEbX9jAczSktMlnPU7kdSrcEtVxncZUAV9OkZclMEL4inmM+igvf2gyPz6VY2WToSoMQ7WfL2eyTxy9+saezFvqXiW17ldQ2zai3fhqsX/tcP7whsmRzQcKpkqEPBGPaiIfTTAjl2Nf0AeJMElR5owysap0Ttw4g32RBib3DvG68vM9N0qbVWJU+Hnu6vkk5gUIn0tRsgV1AcWBZIIcLu0Vfp6b2kLjdKg3BElLc6acyckz/3j6pi0nU7u2bUTr+Bs8DWDGccTKLsTbuxy1aErwc3NCfvnf0sKr9bnybVcQjUeZlc9ztCXIYx2zOZioIXRuBH9/GS9XoMUqcSASYp8m6PAJ6sol0o6i6tAgF12dZ+bP5nBbgriVZmnR49X2enbgoAoO+1PC6+gp6vVmURw4MfbXV91lDVT/DWI7KA3gFeCVV1CbAjF7RNqv+gYLI80dNVf+Lmc5V7do8mfDUIpFWTuYZUho+AfHqW3xcUSYdFwc5jXTz2AwwPRpkznSP0pJSZoGRzkwrYbZWpHxtM2UsRzr8mUera/hWcdheYvGz886zlzH0CYfvPj9Q33p+8rvuIfu3Vkubn8vlWn3J2c/dXRO/Q0XyNt9I46u+zUxP+pjylCR2nIJpyrAWTPKuYJGIFdgljVOef0c1C/eYO/kVpRlM69KUpNKUW875JMmT9gBMspmUZVQJUO6Fy6a+oazQ/+w5JHDH7usCU7XCvRdvV00X7/tme6mSKtWFZ+7P+8JE9vJ4olzhiZO+P1kigo9X6LSB4t0m8klC+/cMO0Bg2hQEvYpSukCrzsGB5MBQnUGmrLV7mHHHSgZ2mzXkEvfGfm7xT87fJva1ilWDh/XHj3/LyVZ8YeGIlIKpTzFvs72O9yFDd/ca/rqXxgt0hhy3GLJoymmy8ZqXfQNOFT5NWIBjZECFG2F6znEQ4KzZUUx76qWoPKGyoKSZ2htpsnCYqkvcGSoa9kvTz0ipEB5Svy/BnZ/TDwUSnUJIbq9z0Dyk5+a++lcU+z24wFfw3FXcbFk0RpXnE25Xn/Wo8JQqmQpsTBpqJ6iJ0YLSuhCigpTZ3G1j2hRMS1fvlBzKfW3jz905KH7YESpLilEt/pDk8T3VDZVZ6cmnnzSRSmuh1j3pis+6rTGN45GfEt6PFk96sFY2aPs09GCOiHbwSk4VPs0ak1Ug/AGwilrb+jC2C8f/Z8nd3wfsghQGzs1sX27+4HnrQrErq4V2qpvv+rgvXvJv4Kaa66qnWZWhWvKSsS8RGC6ry7UUejPve7PWb2a62bLlwqXXtgzcPIeGH9XmRG8fO9yfWX3K+7lSP7/C0nOZqK7u4D6AAAAAElFTkSuQmCC" alt="โลโก้">
+    </div>
+    <div class="sch-info">
+      <h1 id="h-s1">โรงเรียนบ้านหนองทุ่มวิทยา</h1>
+      <p id="h-s2">โรงเรียนโนนคูณอัมพวัน (เรียนรวม) | สังกัด สพฐ. กระทรวงศึกษาธิการ</p>
+    </div>
+    <div class="hdr-acts">
+      <button class="hbtn" id="drive-btn" onclick="driveTgl()"><i class="ti ti-brand-google-drive"></i><span id="drive-lbl">เชื่อม Drive</span></button>
+      <button class="hbtn" onclick="openOv('ov-set')"><i class="ti ti-settings"></i><span>ตั้งค่า</span></button>
+    </div>
+  </div>
+  <nav class="nav">
+    <div class="nv on" onclick="go('home',this)"><i class="ti ti-home"></i> หน้าหลัก</div>
+    <div class="nv" onclick="go('stu',this)"><i class="ti ti-users"></i> ข้อมูลนักเรียน</div>
+    <div class="nv" onclick="go('cal',this)"><i class="ti ti-calendar"></i> ปฏิทินวิชาการ</div>
+    <div class="nv" onclick="go('sum',this)"><i class="ti ti-clipboard-list"></i> สรุปวันเรียน</div>
+    <div class="nv" onclick="go('per',this)"><i class="ti ti-id-badge"></i> บุคลากร</div>
+    <div class="nv" onclick="go('sub',this)"><i class="ti ti-file-upload"></i> ส่งงาน</div>
+    <div class="nv" onclick="go('port',this)"><i class="ti ti-folders"></i> คลังทรัพยากร</div>
+  </nav>
+</div>
+
+<div class="main">
+<!-- HOME -->
+<div class="pg on" id="pg-home">
+  <div class="sg">
+    <div class="sc"><div class="sc-lbl">นักเรียน รร.หนองทุ่มฯ</div><div class="sc-n" id="st1">42</div><div class="sc-sub">ปีการศึกษา <span id="h-yr">2569</span></div></div>
+    <div class="sc r"><div class="sc-lbl">นักเรียน รร.โนนคูณฯ</div><div class="sc-n" id="st2">17</div><div class="sc-sub">เรียนรวม</div></div>
+    <div class="sc g"><div class="sc-lbl">บุคลากร</div><div class="sc-n" id="per-n">10</div><div class="sc-sub">ครูและเจ้าหน้าที่</div></div>
+    <div class="sc o"><div class="sc-lbl">วันเรียนสะสม</div><div class="sc-n">68</div><div class="sc-sub">เป้าหมาย 100 วัน/เทอม</div></div>
+  </div>
+  <div class="two">
+    <div class="card">
+      <div class="ch"><h3><i class="ti ti-speakerphone" style="color:var(--b)"></i>ประกาศล่าสุด</h3><button class="btn p sm" onclick="openAnnM()"><i class="ti ti-plus"></i>เพิ่ม</button></div>
+      <div class="cb" id="ann-list">
+        <div class="ai" data-id="a1"><span class="abd n">ใหม่</span><div style="flex:1"><div class="at">กำหนดการสอบกลางภาค ภาคเรียนที่ 1/2569</div><div class="ad">25 มิ.ย. 2569</div></div><div style="display:flex;gap:4px"><button class="btn sm" onclick="editAnn(this)"><i class="ti ti-edit"></i></button><button class="btn r sm" onclick="delAnn(this)"><i class="ti ti-trash"></i></button></div></div>
+        <div class="ai" data-id="a2"><span class="abd g">ทั่วไป</span><div style="flex:1"><div class="at">ปิดเรียนชดเชยวันอาสาฬหบูชา 21 ก.ค. 2569</div><div class="ad">20 มิ.ย. 2569</div></div><div style="display:flex;gap:4px"><button class="btn sm" onclick="editAnn(this)"><i class="ti ti-edit"></i></button><button class="btn r sm" onclick="delAnn(this)"><i class="ti ti-trash"></i></button></div></div>
+        <div class="ai" data-id="a3"><span class="abd a">กิจกรรม</span><div style="flex:1"><div class="at">กิจกรรมวันสุนทรภู่ – นิทรรศการและการแสดง</div><div class="ad">18 มิ.ย. 2569</div></div><div style="display:flex;gap:4px"><button class="btn sm" onclick="editAnn(this)"><i class="ti ti-edit"></i></button><button class="btn r sm" onclick="delAnn(this)"><i class="ti ti-trash"></i></button></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><h3><i class="ti ti-chart-bar" style="color:var(--g)"></i>สัดส่วนนักเรียน</h3></div>
+      <div class="cb">
+        <div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>รร.บ้านหนองทุ่มวิทยา</span><span style="font-weight:600;color:var(--b)">42 คน (71%)</span></div><div class="pb"><div class="pf" style="width:71%"><span>71%</span></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>รร.โนนคูณอัมพวัน</span><span style="font-weight:600;color:var(--r)">17 คน (29%)</span></div><div class="pb"><div class="pf" style="width:29%;background:var(--r)"><span>29%</span></div></div></div>
+        <div style="background:var(--b4);border-radius:8px;padding:10px;margin-top:12px;text-align:center"><div style="font-size:22px;font-weight:700;color:var(--b)">59 คน</div><div style="font-size:11px;color:var(--gy)">นักเรียนรวมทั้งหมด</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STUDENTS -->
+<div class="pg" id="pg-stu">
+  <div class="card">
+    <div class="ch">
+      <h3><i class="ti ti-users" style="color:var(--b)"></i>ข้อมูลนักเรียน</h3>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <input type="text" id="sq" placeholder="ค้นหาชื่อ..." oninput="fstu()" style="border:1px solid var(--bdr);border-radius:8px;padding:5px 10px;font-size:12px;outline:none;width:120px">
+        <select id="ssc" onchange="fstu()" style="border:1px solid var(--bdr);border-radius:8px;padding:5px 8px;font-size:12px;outline:none"><option value="">ทุกโรงเรียน</option><option>บ้านหนองทุ่มวิทยา</option><option>โนนคูณอัมพวัน</option></select>
+        <select id="scl" onchange="fstu()" style="border:1px solid var(--bdr);border-radius:8px;padding:5px 8px;font-size:12px;outline:none"><option value="">ทุกชั้น</option><option>ป.1</option><option>ป.2</option><option>ป.3</option><option>ป.4</option><option>ป.5</option><option>ป.6</option></select>
+        <button class="btn p sm" onclick="openStuM()"><i class="ti ti-plus"></i>เพิ่ม</button>
+        <button class="btn g sm" onclick="dlStuCSV()"><i class="ti ti-table"></i>ดาวน์โหลดรายชื่อ (Excel)</button>
+        <button class="btn g sm" onclick="dlStuPDF()"><i class="ti ti-file-type-pdf"></i>ดาวน์โหลด PDF</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>รหัส</th><th>ชื่อ-สกุล</th><th>โรงเรียน</th><th>ชั้น</th><th>เพศ</th><th>สถานะ</th><th>จัดการ</th></tr></thead><tbody id="stu-body"></tbody></table></div>
+  </div>
+</div>
+
+<!-- CALENDAR -->
+<div class="pg" id="pg-cal">
+  <div class="card"><div class="cb">
+    <div class="ctb">
+      <div class="vtabs"><button class="vt on" id="vt-m" onclick="setV('month')">รายเดือน</button><button class="vt" id="vt-y" onclick="setV('year')">รายปี</button></div>
+      <div class="csel" style="display:flex;gap:6px"><select id="cms" onchange="cfs()" style="display:block"></select><input type="number" id="cys" onchange="cfsYear()" style="border:1px solid var(--bdr);border-radius:8px;padding:5px 8px;font-size:12px;outline:none;width:80px" placeholder="ปี พ.ศ."></div>
+      <button class="btn sm" onclick="cprev()"><i class="ti ti-chevron-left"></i></button>
+      <button class="btn sm" onclick="ctd()">วันนี้</button>
+      <button class="btn sm" onclick="cnext()"><i class="ti ti-chevron-right"></i></button>
+      <button class="btn g sm" onclick="dlCalCSVSummary()"><i class="ti ti-table"></i>Excel สรุป</button>
+      <button class="btn g sm" onclick="dlCalCSVDetail()"><i class="ti ti-table"></i>Excel รายละเอียด</button>
+      <button class="btn g sm" onclick="dlCalPDFSummary()"><i class="ti ti-file-type-pdf"></i>PDF สรุป</button>
+      <button class="btn g sm" onclick="dlCalPDFDetail()"><i class="ti ti-file-type-pdf"></i>PDF รายละเอียด</button>
+      <button class="btn p sm" onclick="openEvM()"><i class="ti ti-plus"></i>เพิ่มกิจกรรม</button>
+    </div>
+    <h3 id="cal-ttl" style="font-size:15px;font-weight:600;margin-bottom:10px"></h3>
+    <div class="sb4" id="cal-sb">
+      <div class="sbox"><div class="n" id="css">0</div><div class="l">วันเรียน</div></div>
+      <div class="sbox"><div class="n" style="color:var(--r)" id="csh">0</div><div class="l">วันหยุด</div></div>
+      <div class="sbox"><div class="n" style="color:var(--o)" id="csm">0</div><div class="l">ชดเชย</div></div>
+      <div class="sbox"><div class="n" style="color:var(--g)" id="csa">0</div><div class="l">กิจกรรม</div></div>
+    </div>
+    <div class="leg">
+      <div class="li"><div class="ld" style="background:#d5f5e3;border:1px solid #27ae60"></div>วันเรียน</div>
+      <div class="li"><div class="ld" style="background:#fdedec;border:1px solid #c0392b"></div>วันหยุด</div>
+      <div class="li"><div class="ld" style="background:#fef9e7;border:1px solid #e67e22"></div>วันชดเชย</div>
+      <div class="li"><div class="ld" style="background:#d6eaf8;border:1px solid #2471a3"></div>กิจกรรม</div>
+      <div class="li"><div class="ld" style="background:var(--b)"></div>เปิด/ปิดเทอม</div>
+    </div>
+    <div id="cal-body"></div>
+    <div id="ev-pnl" style="display:none"></div>
+  </div></div>
+</div>
+
+<!-- SUMMARY -->
+<div class="pg" id="pg-sum">
+  <div style="font-size:14px;font-weight:600;color:var(--b);margin-bottom:12px;display:flex;align-items:center;gap:7px"><i class="ti ti-clipboard-check"></i>สรุปวันเรียน ปีการศึกษา <span id="sum-yr">2569</span></div>
+  <div class="sb4"><div class="sbox"><div class="n">68</div><div class="l">วันเรียนสะสม</div></div><div class="sbox"><div class="n" style="color:var(--g)">200</div><div class="l">เป้าหมายรวม</div></div><div class="sbox"><div class="n" style="color:var(--o)">132</div><div class="l">คงเหลือ</div></div><div class="sbox"><div class="n" style="color:var(--r)">22</div><div class="l">วันหยุดรวม</div></div></div>
+  <div class="sem"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><div style="font-size:13px;font-weight:600;color:var(--b)">ภาคเรียนที่ 1 (พ.ค. – ก.ย. 2569)</div><div style="font-size:11px;color:var(--gy);margin-top:2px">เปิด 13 พ.ค. 2569 | ปิด 30 ก.ย. 2569</div></div><span class="bdg b">กำลังดำเนินการ</span></div><div class="pb"><div class="pf" style="width:68%"><span>68/100 วัน</span></div></div></div>
+  <div class="sem s2"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><div style="font-size:13px;font-weight:600;color:var(--g)">ภาคเรียนที่ 2 (ต.ค. 2569 – ก.พ. 2570)</div><div style="font-size:11px;color:var(--gy);margin-top:2px">เปิด 1 ต.ค. 2569 | ปิด 28 ก.พ. 2570</div></div><span class="bdg o">ยังไม่เริ่ม</span></div><div class="pb"><div class="pf" style="width:0%;background:var(--g)"></div></div></div>
+  <div class="card"><div class="ch"><h3><i class="ti ti-calendar-stats" style="color:var(--b)"></i>สรุปวันเรียนรายเดือน</h3><div style="display:flex;gap:6px"><select id="sum-yr-sel" onchange="renderMonthSummary()" style="border:1px solid var(--bdr);border-radius:8px;padding:5px 8px;font-size:12px"></select><button class="btn g sm" onclick="dlMonthSumCSV()"><i class="ti ti-table"></i>Excel</button></div></div><div style="overflow-x:auto"><table class="tbl" id="month-sum-tbl"><thead><tr><th>เดือน</th><th>วันเรียน</th><th>วันหยุด</th><th>วันชดเชย</th><th>กิจกรรม</th><th>รวม</th></tr></thead><tbody id="month-sum-body"></tbody></table></div></div>
+  <div class="card"><div class="ch"><h3><i class="ti ti-list" style="color:var(--b)"></i>วันหยุดและชดเชย</h3><button class="btn g sm" onclick="dlSumCSV()"><i class="ti ti-table"></i>ดาวน์โหลด Excel</button></div><div style="overflow-x:auto"><table class="tbl"><thead><tr><th>วันที่</th><th>รายการ</th><th>ประเภท</th></tr></thead><tbody><tr><td>13 พ.ค. 2569</td><td>วันเปิดเทอม ภาคเรียนที่ 1</td><td><span class="bdg b">เปิดเทอม</span></td></tr><tr><td>24 มิ.ย. 2569</td><td>วันสุนทรภู่</td><td><span class="bdg g">กิจกรรม</span></td></tr><tr><td>20 ก.ค. 2569</td><td>วันอาสาฬหบูชา</td><td><span class="bdg r">วันหยุด</span></td></tr><tr><td>21 ก.ค. 2569</td><td>วันเรียนชดเชย วันอาสาฬหบูชา</td><td><span class="bdg o">ชดเชย</span></td></tr><tr><td>12 ส.ค. 2569</td><td>วันแม่แห่งชาติ</td><td><span class="bdg r">วันหยุด</span></td></tr><tr><td>30 ก.ย. 2569</td><td>วันปิดเทอม ภาคเรียนที่ 1</td><td><span class="bdg b">ปิดเทอม</span></td></tr></tbody></table></div></div>
+</div>
+
+<!-- PERSONNEL -->
+<div class="pg" id="pg-per">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <div style="font-size:14px;font-weight:600;color:var(--b);display:flex;align-items:center;gap:7px"><i class="ti ti-id-badge"></i>บุคลากร<span class="chip" id="per-chip">10 คน</span></div>
+    <button class="btn p sm" onclick="openPerM()"><i class="ti ti-plus"></i>เพิ่มบุคลากร</button>
+  </div>
+  <div class="card" style="margin-bottom:14px"><div class="ch"><h3 style="color:var(--b)"><i class="ti ti-crown"></i>ผู้บริหาร</h3></div><div class="cb"><div class="pgrid" id="pg-admin"></div></div></div>
+  <div class="card"><div class="ch"><h3 style="color:var(--g)"><i class="ti ti-chalkboard"></i>คณะครูและบุคลากร</h3><select id="dfl" onchange="renderPer()" style="border:1px solid var(--bdr);border-radius:8px;padding:4px 8px;font-size:11px;outline:none"><option value="">ทุกกลุ่มสาระ</option><option>คณิตศาสตร์</option><option>ภาษาไทย</option><option>วิทยาศาสตร์</option><option>ภาษาต่างประเทศ</option><option>สังคมศึกษา</option><option>พลศึกษา</option><option>สนับสนุน</option></select></div><div class="cb"><div class="pgrid" id="pg-teachers"></div></div></div>
+</div>
+
+<!-- SUBMIT -->
+<div class="pg" id="pg-sub">
+  <div class="ibar" id="drive-bar"><i class="ti ti-info-circle" style="font-size:18px;flex-shrink:0"></i><div id="drive-bar-txt">ยังไม่ได้เชื่อมต่อ Google Drive — ไฟล์จะเก็บในเบราว์เซอร์ชั่วคราว กดปุ่ม <b>"เชื่อม Drive"</b> ด้านบนเพื่อบันทึกไฟล์ใน Google Drive จริง</div></div>
+  <div class="two">
+    <div>
+      <div style="font-size:14px;font-weight:600;color:var(--b);margin-bottom:10px;display:flex;align-items:center;gap:7px"><i class="ti ti-file-upload"></i>ส่งงานใหม่</div>
+      <div class="card"><div class="cb">
+        <div class="fg"><label>ชื่องาน / รายงาน</label><input type="text" id="sub-t" placeholder="ชื่องานหรือรายงาน"></div>
+        <div class="fg"><label>รายละเอียด</label><textarea id="sub-d" rows="2" placeholder="คำอธิบายงาน..."></textarea></div>
+        <div class="fg"><label>ผู้ส่ง</label><select id="sub-sdr"><option value="">-- เลือกชื่อผู้ส่ง --</option></select></div>
+        <div class="fg"><label>กำหนดส่ง</label><input type="date" id="sub-due"></div>
+        <div class="upz" id="upz" onclick="document.getElementById('fi').click()" ondragover="dov(event)" ondrop="droF(event)" ondragleave="dlv()">
+          <i class="ti ti-cloud-upload" style="font-size:32px;color:var(--gy2);display:block;margin-bottom:6px"></i>
+          <div style="font-size:12px;color:#666">คลิกหรือลากไฟล์มาวาง</div>
+          <div style="font-size:10px;color:var(--gy2);margin-top:4px">PDF, Word, Excel, PNG, JPG</div>
+        </div>
+        <input type="file" id="fi" style="display:none" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg,.ppt,.pptx" onchange="hf(event)">
+        <div id="flist"></div>
+        <div style="display:flex;gap:6px"><button class="btn p" style="flex:1" onclick="submitW()"><i class="ti ti-send"></i>ส่งงาน</button><button class="btn" onclick="clrSub()"><i class="ti ti-trash"></i>ล้าง</button></div>
+      </div></div>
+    </div>
+    <div>
+      <div style="font-size:14px;font-weight:600;color:var(--b);margin-bottom:10px;display:flex;align-items:center;gap:7px"><i class="ti ti-clipboard-check"></i>ประวัติการส่งงาน</div>
+      <div id="sub-hist"></div>
+    </div>
+  </div>
+</div>
+
+<!-- RESOURCE LIBRARY -->
+<div class="pg" id="pg-port">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+    <div style="font-size:14px;font-weight:600;color:var(--b);display:flex;align-items:center;gap:7px"><i class="ti ti-folders"></i>คลังทรัพยากรโรงเรียน</div>
+    <button class="btn p sm" onclick="openPortM()"><i class="ti ti-plus"></i>เพิ่มรายการ</button>
+  </div>
+  <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap">
+    <button class="btn sm port-fbtn on" data-c="" onclick="filterPort('',this)">ทั้งหมด</button>
+    <button class="btn sm port-fbtn" data-c="cert" onclick="filterPort('cert',this)"><i class="ti ti-certificate"></i>เกียรติบัตร</button>
+    <button class="btn sm port-fbtn" data-c="form" onclick="filterPort('form',this)"><i class="ti ti-forms"></i>ฟอร์มแบบบันทึก</button>
+    <button class="btn sm port-fbtn" data-c="doc" onclick="filterPort('doc',this)"><i class="ti ti-file-text"></i>เอกสารราชการ</button>
+    <button class="btn sm port-fbtn" data-c="other" onclick="filterPort('other',this)"><i class="ti ti-dots"></i>อื่นๆ</button>
+    <input type="text" id="port-q" placeholder="ค้นหารายการ..." oninput="renderPort()" style="border:1px solid var(--bdr);border-radius:8px;padding:5px 10px;font-size:12px;outline:none;width:160px;margin-left:auto">
+  </div>
+  <div class="card"><div class="cb" id="port-list"></div></div>
+</div>
+</div><!-- /main -->
+
+<!-- Resource Modal -->
+<div class="ov" id="ov-port"><div class="mbox">
+  <h3><i class="ti ti-folder-plus" style="color:var(--b)"></i><span id="port-mt">เพิ่มรายการ</span></h3>
+  <input type="hidden" id="port-eid">
+  <div class="fg"><label>ชื่อรายการ</label><input type="text" id="port-ttl" placeholder="เช่น เกียรติบัตรการแข่งขันคณิตศาสตร์, แบบฟอร์มขอลา, หนังสือราชการ..."></div>
+  <div class="fg"><label>รายละเอียด / หมายเหตุ</label><textarea id="port-desc" rows="2" placeholder="คำอธิบายเพิ่มเติม (ถ้ามี)"></textarea></div>
+  <div class="fr">
+    <div class="fg"><label>หมวดหมู่</label><select id="port-cat"><option value="cert">เกียรติบัตร</option><option value="form">ฟอร์มแบบบันทึก</option><option value="doc">เอกสารราชการ</option><option value="other">อื่นๆ</option></select></div>
+    <div class="fg"><label>วันที่</label><input type="date" id="port-dt"></div>
+  </div>
+  <div class="fg"><label>เจ้าของ / หน่วยงานที่เกี่ยวข้อง (ถ้ามี)</label><input type="text" id="port-owner" placeholder="ชื่อนักเรียน/ครู/ฝ่ายงาน"></div>
+  <div class="fg"><label>ลิงก์ไฟล์ (Google Drive หรือ URL อื่น)</label><input type="text" id="port-link" placeholder="https://drive.google.com/..."></div>
+  <div class="fg"><label>แนบไฟล์โดยตรง (ถ้าไม่มีลิงก์)</label><input type="file" id="port-file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.png,.jpg,.jpeg"><div id="port-file-name" style="font-size:11px;color:var(--gy);margin-top:4px"></div></div>
+  <div class="mbts"><button class="btn" onclick="closeOv('ov-port')">ยกเลิก</button><button class="btn p" onclick="savePort()">บันทึก</button></div>
+</div></div>
+
+<!-- MODALS -->
+<!-- Settings -->
+<div class="ov" id="ov-set"><div class="mbox">
+  <h3><i class="ti ti-settings" style="color:var(--b)"></i>ตั้งค่าโรงเรียน</h3>
+  <div class="fg"><label>ชื่อโรงเรียนหลัก</label><input type="text" id="ss1" value="โรงเรียนบ้านหนองทุ่มวิทยา"></div>
+  <div class="fg"><label>ชื่อโรงเรียนเรียนรวม</label><input type="text" id="ss2" value="โรงเรียนโนนคูณอัมพวัน (เรียนรวม)"></div>
+  <div class="fg"><label>อัปโหลดโลโก้โรงเรียนใหม่</label><input type="file" id="logo-up" accept="image/*" onchange="changeLogo(event)"></div>
+  <div class="fr">
+    <div class="fg"><label>นักเรียน รร.หลัก</label><input type="number" id="sn1" value="42"></div>
+    <div class="fg"><label>นักเรียน รร.เรียนรวม</label><input type="number" id="sn2" value="17"></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>จำนวนบุคลากร</label><input type="number" id="sper" value="10"></div>
+    <div class="fg"><label>ปีการศึกษา</label><input type="text" id="syr" value="2569"></div>
+  </div>
+  <!-- Drive API Settings -->
+  <div style="background:var(--b4);border-radius:8px;padding:12px;margin-bottom:10px">
+    <div style="font-size:12px;font-weight:600;color:var(--b);margin-bottom:8px"><i class="ti ti-brand-google-drive"></i> ตั้งค่า Google Drive API</div>
+    <div class="fg" style="margin-bottom:6px"><label>Client ID (จาก Google Cloud Console)</label><input type="text" id="gcid" placeholder="xxxxx.apps.googleusercontent.com"></div>
+    <div class="fg" style="margin-bottom:0"><label>API Key</label><input type="text" id="gkey" placeholder="AIzaSy..."></div>
+    <div style="font-size:10px;color:var(--gy);margin-top:6px">วิธีรับ: <a href="https://console.cloud.google.com" target="_blank" style="color:var(--b)">console.cloud.google.com</a> → สร้าง Project → เปิด Drive API + Picker API → สร้าง OAuth 2.0 Client ID</div>
+  </div>
+  <div class="mbts"><button class="btn" onclick="closeOv('ov-set')">ยกเลิก</button><button class="btn p" onclick="saveSet()">บันทึก</button></div>
+</div></div>
+
+<!-- Announce -->
+<div class="ov" id="ov-ann"><div class="mbox">
+  <h3><i class="ti ti-speakerphone" style="color:var(--b)"></i><span id="ann-mt">เพิ่มประกาศ</span></h3>
+  <input type="hidden" id="ann-eid">
+  <div class="fg"><label>หัวข้อประกาศ</label><input type="text" id="ann-i" placeholder="ชื่อประกาศ"></div>
+  <div class="fr"><div class="fg"><label>ประเภท</label><select id="ann-tp"><option value="n">ใหม่</option><option value="g">ทั่วไป</option><option value="a">กิจกรรม</option><option value="v">วิชาการ</option></select></div><div class="fg"><label>วันที่</label><input type="date" id="ann-dt"></div></div>
+  <div class="mbts"><button class="btn" onclick="closeOv('ov-ann')">ยกเลิก</button><button class="btn p" onclick="saveAnn()">บันทึก</button></div>
+</div></div>
+
+<!-- Student -->
+<div class="ov" id="ov-stu"><div class="mbox">
+  <h3><i class="ti ti-user-plus" style="color:var(--b)"></i>เพิ่ม/แก้ไขนักเรียน</h3>
+  <input type="hidden" id="stu-eid">
+  <div class="fr"><div class="fg"><label>ชื่อ</label><input type="text" id="sfn" placeholder="ชื่อ"></div><div class="fg"><label>นามสกุล</label><input type="text" id="sln" placeholder="นามสกุล"></div></div>
+  <div class="fr"><div class="fg"><label>โรงเรียน</label><select id="ssc2"><option>บ้านหนองทุ่มวิทยา</option><option>โนนคูณอัมพวัน</option></select></div><div class="fg"><label>ชั้น</label><select id="scl2"><option>ป.1</option><option>ป.2</option><option>ป.3</option><option>ป.4</option><option>ป.5</option><option>ป.6</option></select></div></div>
+  <div class="fr"><div class="fg"><label>เพศ</label><select id="sgd"><option>ชาย</option><option>หญิง</option></select></div><div class="fg"><label>สถานะ</label><select id="sst"><option>กำลังศึกษา</option><option>ลาออก</option><option>โอนย้าย</option></select></div></div>
+  <div class="mbts"><button class="btn" onclick="closeOv('ov-stu')">ยกเลิก</button><button class="btn p" onclick="saveStu()">บันทึก</button></div>
+</div></div>
+
+<!-- Event -->
+<div class="ov" id="ov-ev"><div class="mbox">
+  <h3><i class="ti ti-calendar-plus" style="color:var(--b)"></i>เพิ่ม/แก้ไขกิจกรรม</h3>
+  <div class="fg"><label>ชื่อกิจกรรม</label><input type="text" id="evn" placeholder="เช่น วันเข้าพรรษา, กีฬาสี"></div>
+  <div class="fr"><div class="fg"><label>วันที่เริ่ม</label><input type="date" id="evs"></div><div class="fg"><label>วันที่สิ้นสุด</label><input type="date" id="eve"></div></div>
+  <div class="fg"><label>ประเภท</label><select id="evtp"><option value="school">วันเรียน</option><option value="holiday">วันหยุด</option><option value="makeup">วันเรียนชดเชย</option><option value="activity">กิจกรรม</option><option value="open">วันเปิดเทอม</option><option value="close">วันปิดเทอม</option></select></div>
+  <div class="fg"><label>หมายเหตุ</label><input type="text" id="evnt" placeholder="รายละเอียดเพิ่มเติม"></div>
+  <div class="mbts"><button class="btn" onclick="closeOv('ov-ev')">ยกเลิก</button><button class="btn p" onclick="saveEv()">บันทึก</button></div>
+</div></div>
+
+<!-- Personnel -->
+<div class="ov" id="ov-per"><div class="mbox">
+  <h3><i class="ti ti-user-plus" style="color:var(--g)"></i>เพิ่ม/แก้ไขบุคลากร</h3>
+  <input type="hidden" id="per-eid">
+  <div class="fg"><label>ชื่อ-สกุล</label><input type="text" id="pname" placeholder="ชื่อเต็ม"></div>
+  <div class="fg"><label>รูปภาพ</label><input type="file" id="pphoto" accept="image/*" onchange="prevPerPhoto(event)"><div id="pphoto-prev" style="margin-top:8px"></div></div>
+  <div class="fr"><div class="fg"><label>ตำแหน่ง</label><input type="text" id="prole" placeholder="ครูผู้สอน / ผอ."></div><div class="fg"><label>กลุ่มสาระ</label><select id="pdept"><option>คณิตศาสตร์</option><option>ภาษาไทย</option><option>วิทยาศาสตร์</option><option>ภาษาต่างประเทศ</option><option>สังคมศึกษา</option><option>พลศึกษา</option><option>สนับสนุน</option></select></div></div>
+  <div class="fr"><div class="fg"><label>ประเภท</label><select id="ptype"><option value="teacher">ครู/บุคลากร</option><option value="admin">ผู้บริหาร</option></select></div><div class="fg"><label>สีอวาตาร์</label><select id="pclr"><option value="b">น้ำเงิน</option><option value="g">เขียว</option><option value="o">ส้ม</option><option value="r">แดง</option></select></div></div>
+  <div class="mbts"><button class="btn" onclick="closeOv('ov-per')">ยกเลิก</button><button class="btn p" onclick="savePer()">บันทึก</button></div>
+</div></div>
+
+<!-- Toast & Save indicator -->
+<div class="toast" id="tst"><i class="ti ti-check"></i><span id="tst-m"></span></div>
+<div class="save-ind" id="sind"><i class="ti ti-device-floppy"></i>บันทึกอัตโนมัติ...</div>
+
+<script>
+// ═══════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════
+const TM=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const DS=['อา','จ','อ','พ','พฤ','ศ','ส'];
+
+let D = {
+  settings:{s1:'โรงเรียนบ้านหนองทุ่มวิทยา',s2:'โรงเรียนโนนคูณอัมพวัน (เรียนรวม)',n1:42,n2:17,nper:10,yr:'2569',gcid:'',gkey:''},
+  events:{'2026-4-13':[{name:'วันเปิดเทอม ภาคเรียนที่ 1',type:'open'}],'2026-5-3':[{name:'วันฉัตรมงคล',type:'holiday'}],'2026-6-23':[{name:'วันสุนทรภู่',type:'activity'}],'2026-7-19':[{name:'วันอาสาฬหบูชา',type:'holiday'}],'2026-7-21':[{name:'วันเรียนชดเชย',type:'makeup'}],'2026-8-12':[{name:'วันแม่แห่งชาติ',type:'holiday'}],'2026-9-30':[{name:'วันปิดเทอม ภาคเรียนที่ 1',type:'close'}]},
+  students:[
+    {id:'6701',fn:'สมชาย',ln:'ใจดี',sc:'บ้านหนองทุ่มวิทยา',cl:'ป.6',gd:'ชาย',st:'กำลังศึกษา'},
+    {id:'6702',fn:'นภาพร',ln:'สุขสม',sc:'บ้านหนองทุ่มวิทยา',cl:'ป.5',gd:'หญิง',st:'กำลังศึกษา'},
+    {id:'6703',fn:'กิตติพงศ์',ln:'มั่นคง',sc:'บ้านหนองทุ่มวิทยา',cl:'ป.4',gd:'ชาย',st:'กำลังศึกษา'},
+    {id:'6704',fn:'วริษา',ln:'แสงดี',sc:'บ้านหนองทุ่มวิทยา',cl:'ป.3',gd:'หญิง',st:'กำลังศึกษา'},
+    {id:'6705',fn:'ธนากร',ln:'ดีงาม',sc:'โนนคูณอัมพวัน',cl:'ป.6',gd:'ชาย',st:'กำลังศึกษา'},
+    {id:'6706',fn:'สุดารัตน์',ln:'ทองใบ',sc:'โนนคูณอัมพวัน',cl:'ป.5',gd:'หญิง',st:'กำลังศึกษา'},
+  ],
+  personnel:[
+    {id:'p1',name:'ดร.นวลจันทร์ วงศ์ดี',role:'ผู้อำนวยการโรงเรียน',dept:'ผู้บริหาร',type:'admin',color:'b'},
+    {id:'p2',name:'นายสมชาย ขยันดี',role:'รองผู้อำนวยการ',dept:'ผู้บริหาร',type:'admin',color:'g'},
+    {id:'p3',name:'นางสาวมณี สว่างใจ',role:'ครูผู้สอน',dept:'ภาษาไทย',type:'teacher',color:'g'},
+    {id:'p4',name:'นายวิทยา คงมั่น',role:'ครูผู้สอน',dept:'คณิตศาสตร์',type:'teacher',color:'b'},
+    {id:'p5',name:'นางสาวสุภาพร ใฝ่เรียน',role:'ครูผู้สอน',dept:'วิทยาศาสตร์',type:'teacher',color:'o'},
+    {id:'p6',name:'นายประเสริฐ ดีงาม',role:'ครูผู้สอน',dept:'ภาษาต่างประเทศ',type:'teacher',color:'r'},
+    {id:'p7',name:'นางจิราภา รุ่งโรจน์',role:'ครูผู้สอน',dept:'สังคมศึกษา',type:'teacher',color:'g'},
+    {id:'p8',name:'นายสุรชัย แข็งแรง',role:'ครูผู้สอน',dept:'พลศึกษา',type:'teacher',color:'b'},
+    {id:'p9',name:'นางสาวปิยะมาศ ใจงาม',role:'ครูผู้สอน',dept:'คณิตศาสตร์',type:'teacher',color:'o'},
+    {id:'p10',name:'นายมานะ ตั้งใจ',role:'เจ้าหน้าที่ธุรการ',dept:'สนับสนุน',type:'teacher',color:'r'},
+  ],
+  submissions:[],
+  portfolio:[],
+  annCounter:10
+};
+
+// ── Load from localStorage ──
+(function(){
+  try{
+    const saved=localStorage.getItem('schoolDB');
+    if(saved){const p=JSON.parse(saved);Object.assign(D,p);}
+  }catch(e){}
+})();
+
+let saveTimer=null;
+function save(){
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>{
+    try{
+      const toSave={...D,submissions:D.submissions.map(s=>({...s,files:s.files.map(f=>({...f,url:null}))}))};
+      localStorage.setItem('schoolDB',JSON.stringify(toSave));
+      const ind=document.getElementById('sind');
+      ind.classList.add('on');setTimeout(()=>ind.classList.remove('on'),1500);
+    }catch(e){console.warn('save failed',e);}
+  },800);
+}
+
+// ═══════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════
+let toastT;
+function toast(m,ok=true){
+  const el=document.getElementById('tst');
+  el.style.background=ok?'var(--g)':'var(--r)';
+  document.getElementById('tst-m').textContent=m;
+  el.classList.add('on');clearTimeout(toastT);
+  toastT=setTimeout(()=>el.classList.remove('on'),3000);
+}
+function openOv(id){document.getElementById(id).classList.add('on');}
+function closeOv(id){document.getElementById(id).classList.remove('on');}
+function dlBlob(blob,fn){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fn;a.click();}
+function dlCSV(rows,fn){
+  const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  dlBlob(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}),fn);
+}
+function thDate(d){return d.getDate()+' '+TM[d.getMonth()]+' '+(d.getFullYear()+543);}
+
+// ═══════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════
+function go(p,el){
+  document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.nv').forEach(x=>x.classList.remove('on'));
+  document.getElementById('pg-'+p).classList.add('on');
+  if(el)el.classList.add('on');
+  document.querySelectorAll('.ov').forEach(o=>o.classList.remove('on'));
+  if(p==='cal'){initCS();renderCal();}
+  if(p==='stu')renderStu();
+  if(p==='per')renderPer();
+  if(p==='sub'){renderHist();popSenders();}
+  if(p==='sum')renderMonthSummary();
+  if(p==='port')renderPort();
+}
+
+// ═══════════════════════════════════════
+//  SETTINGS
+// ═══════════════════════════════════════
+function changeLogo(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    document.getElementById('school-logo').src=ev.target.result;
+    D.logoData=ev.target.result;save();toast('เปลี่ยนโลโก้แล้ว');
+  };r.readAsDataURL(f);
+}
+function saveSet(){
+  D.settings={
+    s1:document.getElementById('ss1').value.trim(),
+    s2:document.getElementById('ss2').value.trim(),
+    n1:parseInt(document.getElementById('sn1').value)||0,
+    n2:parseInt(document.getElementById('sn2').value)||0,
+    nper:parseInt(document.getElementById('sper').value)||0,
+    yr:document.getElementById('syr').value.trim(),
+    gcid:document.getElementById('gcid').value.trim(),
+    gkey:document.getElementById('gkey').value.trim()
+  };
+  applySettings();save();closeOv('ov-set');toast('บันทึกการตั้งค่าแล้ว');
+  if(D.settings.gcid)initGapi();
+}
+function applySettings(){
+  const s=D.settings;
+  document.getElementById('h-s1').textContent=s.s1;
+  document.getElementById('h-s2').textContent=s.s2+' | สังกัด สพฐ. กระทรวงศึกษาธิการ';
+  document.getElementById('st1').textContent=s.n1;
+  document.getElementById('st2').textContent=s.n2;
+  document.getElementById('per-n').textContent=s.nper;
+  document.getElementById('h-yr').textContent=s.yr;
+  document.getElementById('sum-yr').textContent=s.yr;
+  document.title='ระบบสารสนเทศ - '+s.s1;
+  if(D.logoData)document.getElementById('school-logo').src=D.logoData;
+}
+function openSetModal(){
+  const s=D.settings;
+  document.getElementById('ss1').value=s.s1;document.getElementById('ss2').value=s.s2;
+  document.getElementById('sn1').value=s.n1;document.getElementById('sn2').value=s.n2;
+  document.getElementById('sper').value=s.nper;document.getElementById('syr').value=s.yr;
+  document.getElementById('gcid').value=s.gcid||'';document.getElementById('gkey').value=s.gkey||'';
+  openOv('ov-set');
+}
+
+// ═══════════════════════════════════════
+//  GOOGLE DRIVE
+// ═══════════════════════════════════════
+let driveOn=false,gToken=null,gapiOk=false;
+
+function initGapi(){
+  const cid=D.settings.gcid,key=D.settings.gkey;
+  if(!cid||!key)return;
+  if(typeof gapi==='undefined'){
+    const s=document.createElement('script');s.src='https://apis.google.com/js/api.js';
+    s.onload=()=>gapiLoad(cid,key);document.head.appendChild(s);
+  } else gapiLoad(cid,key);
+}
+function gapiLoad(cid,key){
+  gapi.load('client:auth2',()=>{
+    gapi.client.init({apiKey:key,clientId:cid,scope:'https://www.googleapis.com/auth/drive.file',discoveryDocs:['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']})
+    .then(()=>{gapiOk=true;toast('Google Drive API พร้อมใช้งาน');})
+    .catch(e=>{console.warn('GAPI err',e);});
+  });
+}
+function driveTgl(){
+  if(!D.settings.gcid){
+    toast('กรุณาตั้งค่า Client ID ก่อน → กดปุ่ม "ตั้งค่า"',false);
+    openSetModal();return;
+  }
+  if(!gapiOk){initGapi();toast('กำลังเริ่มต้น Google API...');return;}
+  if(!driveOn){
+    gapi.auth2.getAuthInstance().signIn().then(u=>{
+      gToken=u.getAuthResponse().access_token;driveOn=true;
+      document.getElementById('drive-btn').classList.add('drive-on');
+      document.getElementById('drive-lbl').textContent='Drive เชื่อมแล้ว ✓';
+      document.getElementById('drive-bar').className='ibar ok';
+      document.getElementById('drive-bar-txt').innerHTML='<b>เชื่อมต่อ Google Drive สำเร็จ!</b> ไฟล์ที่ส่งจะถูกอัปโหลดไปยัง Google Drive โดยอัตโนมัติ';
+      toast('เชื่อมต่อ Google Drive สำเร็จ!');
+    }).catch(()=>toast('ยกเลิกการเชื่อมต่อ',false));
+  } else {
+    gapi.auth2.getAuthInstance().signOut().then(()=>{
+      driveOn=false;gToken=null;
+      document.getElementById('drive-btn').classList.remove('drive-on');
+      document.getElementById('drive-lbl').textContent='เชื่อม Drive';
+      document.getElementById('drive-bar').className='ibar warn';
+      document.getElementById('drive-bar-txt').textContent='ตัดการเชื่อมต่อ Google Drive แล้ว';
+      toast('ตัดการเชื่อมต่อแล้ว');
+    });
+  }
+}
+async function driveUpload(file){
+  if(!driveOn||!gToken)return null;
+  try{
+    const meta={name:file.name,mimeType:file.type||'application/octet-stream'};
+    const form=new FormData();
+    form.append('metadata',new Blob([JSON.stringify(meta)],{type:'application/json'}));
+    form.append('file',file);
+    const r=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink',{method:'POST',headers:{Authorization:'Bearer '+gToken},body:form});
+    return await r.json();
+  }catch(e){console.error('drive upload',e);return null;}
+}
+
+// ═══════════════════════════════════════
+//  ANNOUNCE
+// ═══════════════════════════════════════
+function openAnnM(){
+  document.getElementById('ann-mt').textContent='เพิ่มประกาศ';
+  document.getElementById('ann-eid').value='';
+  document.getElementById('ann-i').value='';
+  document.getElementById('ann-dt').value=new Date().toISOString().slice(0,10);
+  openOv('ov-ann');
+}
+function editAnn(btn){
+  const item=btn.closest('.ai');
+  document.getElementById('ann-mt').textContent='แก้ไขประกาศ';
+  document.getElementById('ann-eid').value=item.dataset.id;
+  document.getElementById('ann-i').value=item.querySelector('.at').textContent;
+  const m=item.querySelector('.abd').className.match(/\b([ngav])\b/);
+  document.getElementById('ann-tp').value=m?m[1]:'g';
+  openOv('ov-ann');
+}
+function delAnn(btn){
+  if(!confirm('ยืนยันลบประกาศ?'))return;
+  const item=btn.closest('.ai');item.style.opacity='0';item.style.transition='.3s';
+  setTimeout(()=>item.remove(),300);toast('ลบประกาศแล้ว');
+}
+function saveAnn(){
+  const ttl=document.getElementById('ann-i').value.trim();
+  if(!ttl){toast('กรุณากรอกหัวข้อ',false);return;}
+  const tp=document.getElementById('ann-tp').value;
+  const dtv=document.getElementById('ann-dt').value;
+  const eid=document.getElementById('ann-eid').value;
+  const d=dtv?new Date(dtv):new Date();
+  const ds=thDate(d);
+  const lbl={n:'ใหม่',g:'ทั่วไป',a:'กิจกรรม',v:'วิชาการ'}[tp]||'ทั่วไป';
+  if(eid){
+    const item=document.querySelector('.ai[data-id="'+eid+'"]');
+    if(item){
+      item.querySelector('.at').textContent=ttl;item.querySelector('.ad').textContent=ds;
+      const bd=item.querySelector('.abd');bd.className='abd '+tp;bd.textContent=lbl;
+    }
+    toast('แก้ไขประกาศแล้ว');
+  } else {
+    const nid='a'+(++D.annCounter);
+    const el=document.createElement('div');el.className='ai';el.dataset.id=nid;
+    el.innerHTML='<span class="abd '+tp+'">'+lbl+'</span><div style="flex:1"><div class="at">'+ttl+'</div><div class="ad">'+ds+'</div></div><div style="display:flex;gap:4px"><button class="btn sm" onclick="editAnn(this)"><i class="ti ti-edit"></i></button><button class="btn r sm" onclick="delAnn(this)"><i class="ti ti-trash"></i></button></div>';
+    document.getElementById('ann-list').insertBefore(el,document.getElementById('ann-list').firstChild);
+    toast('เพิ่มประกาศแล้ว');
+  }
+  closeOv('ov-ann');
+}
+
+// ═══════════════════════════════════════
+//  CALENDAR
+// ═══════════════════════════════════════
+let calY=new Date().getFullYear(),calM=new Date().getMonth(),calV='month';
+function ek(y,m,d){return y+'-'+m+'-'+d;}
+function initCS(){
+  const ms=document.getElementById('cms'),ys=document.getElementById('cys');
+  ms.innerHTML=TM.map((n,i)=>'<option value="'+i+'"'+(i===calM?' selected':'')+'>'+n+'</option>').join('');
+  ys.value=calY+543;
+}
+function cfs(){calM=+document.getElementById('cms').value;renderCal();}
+function cfsYear(){
+  const v=parseInt(document.getElementById('cys').value);
+  if(!isNaN(v)&&v>=2400){calY=v-543;renderCal();}
+}
+function setV(v){
+  calV=v;
+  document.getElementById('vt-m').classList.toggle('on',v==='month');
+  document.getElementById('vt-y').classList.toggle('on',v==='year');
+  document.getElementById('cal-sb').style.display=v==='month'?'grid':'none';
+  document.getElementById('cms').style.display=v==='month'?'':'none';
+  renderCal();
+}
+function cprev(){if(calV==='month'){calM--;if(calM<0){calM=11;calY--;}}else calY--;initCS();renderCal();}
+function cnext(){if(calV==='month'){calM++;if(calM>11){calM=0;calY++;}}else calY++;initCS();renderCal();}
+function ctd(){const t=new Date();calY=t.getFullYear();calM=t.getMonth();initCS();renderCal();}
+function renderCal(){document.getElementById('ev-pnl').style.display='none';calV==='month'?renderMCal():renderYCal();}
+function renderMCal(){
+  const b=document.getElementById('cal-body'),td=new Date();
+  document.getElementById('cal-ttl').textContent=TM[calM]+' '+(calY+543);
+  const first=new Date(calY,calM,1).getDay(),days=new Date(calY,calM+1,0).getDate(),prev=new Date(calY,calM,0).getDate();
+  let s=0,h=0,mk=0,ac=0;
+  let html='<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:3px">'+DS.map(d=>'<div class="cdnh">'+d+'</div>').join('')+'</div><div class="cgm">';
+  for(let i=0;i<first;i++)html+='<div class="cd om"><div class="dn">'+(prev-first+i+1)+'</div></div>';
+  for(let d=1;d<=days;d++){
+    const key=ek(calY,calM,d),dt=new Date(calY,calM,d),isW=dt.getDay()===0||dt.getDay()===6;
+    const isT=td.getFullYear()===calY&&td.getMonth()===calM&&td.getDate()===d;
+    let ev='';
+    if(D.events[key])D.events[key].forEach(e=>{
+      const c=e.type==='holiday'?'eh':e.type==='makeup'?'em':e.type==='activity'?'ea':(e.type==='open'||e.type==='close')?'eo':'es';
+      if(e.type==='school')s++;else if(e.type==='holiday')h++;else if(e.type==='makeup')mk++;else if(e.type==='activity')ac++;
+      ev+='<span class="evd '+c+'">'+e.name+'</span>';
+    });
+    else if(!isW)s++;
+    html+='<div class="cd'+(isT?' td':'')+'" onclick="selD('+calY+','+calM+','+d+')" data-dk="'+key+'"><div class="dn">'+d+'</div>'+ev+'</div>';
+  }
+  const rem=(first+days)%7?7-(first+days)%7:0;
+  for(let i=1;i<=rem;i++)html+='<div class="cd om"><div class="dn">'+i+'</div></div>';
+  html+='</div>';b.innerHTML=html;
+  document.getElementById('css').textContent=s;document.getElementById('csh').textContent=h;
+  document.getElementById('csm').textContent=mk;document.getElementById('csa').textContent=ac;
+}
+function renderYCal(){
+  const b=document.getElementById('cal-body'),td=new Date();
+  document.getElementById('cal-ttl').textContent='ปี พ.ศ. '+(calY+543);
+  let html='<div class="ygrid">';
+  for(let m=0;m<12;m++){
+    const first=new Date(calY,m,1).getDay(),days=new Date(calY,m+1,0).getDate(),prev=new Date(calY,m,0).getDate();
+    html+='<div class="ymc" onclick="jmpM('+m+')"><div class="ymt">'+TM[m]+'</div><div class="ymg">'+DS.map(d=>'<div class="ymdh">'+d+'</div>').join('');
+    for(let i=0;i<first;i++)html+='<div class="ymd hom">'+(prev-first+i+1)+'</div>';
+    for(let d=1;d<=days;d++){
+      const key=ek(calY,m,d),isT=td.getFullYear()===calY&&td.getMonth()===m&&td.getDate()===d;
+      let c='ymd';if(isT)c+=' htd';else if(D.events[key]){const t=D.events[key][0]?.type;c+=t==='holiday'?' hhol':' hev';}
+      html+='<div class="'+c+'">'+d+'</div>';
+    }
+    const rem=(first+days)%7?7-(first+days)%7:0;
+    for(let i=1;i<=rem;i++)html+='<div class="ymd hom">'+i+'</div>';
+    html+='</div></div>';
+  }
+  html+='</div>';b.innerHTML=html;
+}
+function jmpM(m){calM=m;setV('month');document.getElementById('cms').value=m;}
+function selD(y,m,d){
+  document.querySelectorAll('.cd.sel').forEach(x=>x.classList.remove('sel'));
+  const key=ek(y,m,d);
+  document.querySelectorAll('.cd[data-dk="'+key+'"]').forEach(x=>x.classList.add('sel'));
+  const pnl=document.getElementById('ev-pnl');
+  let html='<div class="epb"><h4><i class="ti ti-calendar-event"></i>'+d+' '+TM[m]+' '+(y+543)+'</h4>';
+  if(D.events[key]&&D.events[key].length){
+    D.events[key].forEach((ev,i)=>{
+      const lbl={school:'วันเรียน',holiday:'วันหยุด',makeup:'ชดเชย',activity:'กิจกรรม',open:'เปิดเทอม',close:'ปิดเทอม'}[ev.type]||ev.type;
+      html+='<div class="er"><div><span class="chip">'+lbl+'</span> <span style="font-size:12px">'+ev.name+'</span>'+(ev.note?'<div style="font-size:10px;color:var(--gy);margin-top:2px">'+ev.note+'</div>':'')+'</div><button class="btn r sm" onclick="delEv(\''+key+'\','+i+')"><i class="ti ti-trash"></i></button></div>';
+    });
+  } else html+='<div style="font-size:12px;color:var(--gy);text-align:center;padding:8px">ไม่มีกิจกรรม <button class="btn p sm" style="margin-left:6px" onclick="openEvMD(\''+key+'\')"><i class="ti ti-plus"></i>เพิ่ม</button></div>';
+  html+='</div>';pnl.innerHTML=html;pnl.style.display='block';
+}
+function delEv(key,idx){
+  if(!confirm('ลบกิจกรรมนี้?'))return;
+  D.events[key].splice(idx,1);if(!D.events[key].length)delete D.events[key];
+  save();renderCal();toast('ลบกิจกรรมแล้ว');
+}
+function openEvM(){['evn','evnt','evs','eve'].forEach(id=>document.getElementById(id).value='');openOv('ov-ev');}
+function openEvMD(key){
+  const p=key.split('-');
+  const ds=p[0]+'-'+String(parseInt(p[1])+1).padStart(2,'0')+'-'+String(parseInt(p[2])).padStart(2,'0');
+  openEvM();document.getElementById('evs').value=ds;document.getElementById('eve').value=ds;
+}
+function saveEv(){
+  const name=document.getElementById('evn').value.trim(),s=document.getElementById('evs').value,e=document.getElementById('eve').value,tp=document.getElementById('evtp').value,note=document.getElementById('evnt').value;
+  if(!name||!s){toast('กรุณากรอกข้อมูลให้ครบ',false);return;}
+  const sd=new Date(s),ed=new Date(e||s);
+  for(let dt=new Date(sd);dt<=ed;dt.setDate(dt.getDate()+1)){
+    const k=ek(dt.getFullYear(),dt.getMonth(),dt.getDate());
+    if(!D.events[k])D.events[k]=[];
+    D.events[k].push({name,type:tp,note});
+  }
+  save();closeOv('ov-ev');renderCal();toast('เพิ่มกิจกรรมแล้ว');
+}
+function monthDayCounts(y){
+  // returns {monthIdx: {school,holiday,makeup,activity,total}} for given B.E. year (y = CE year)
+  const res=[];
+  for(let m=0;m<12;m++){
+    const days=new Date(y,m+1,0).getDate();
+    let s=0,h=0,mk=0,ac=0;
+    for(let d=1;d<=days;d++){
+      const key=ek(y,m,d),dt=new Date(y,m,d),isW=dt.getDay()===0||dt.getDay()===6;
+      if(D.events[key]&&D.events[key].length){
+        D.events[key].forEach(e=>{
+          if(e.type==='school')s++;else if(e.type==='holiday')h++;else if(e.type==='makeup')mk++;else if(e.type==='activity')ac++;
+        });
+      } else if(!isW) s++;
+    }
+    res.push({m,school:s,holiday:h,makeup:mk,activity:ac});
+  }
+  return res;
+}
+function dlCalCSVSummary(){
+  const rows=[['เดือน','ปี พ.ศ.','วันเรียน','วันหยุด','วันชดเชย','กิจกรรม']];
+  monthDayCounts(calY).forEach(r=>rows.push([TM[r.m],calY+543,r.school,r.holiday,r.makeup,r.activity]));
+  dlCSV(rows,'ปฏิทินวิชาการ_สรุปรายเดือน_'+(calY+543)+'.csv');toast('ดาวน์โหลด Excel (สรุป) แล้ว');
+}
+function dlCalCSVDetail(){
+  const rows=[['วันที่','ชื่อกิจกรรม','ประเภท','หมายเหตุ']];
+  Object.keys(D.events).filter(k=>+k.split('-')[0]===calY).sort((a,b)=>{
+    const pa=a.split('-').map(Number),pb=b.split('-').map(Number);
+    return new Date(pa[0],pa[1],pa[2])-new Date(pb[0],pb[1],pb[2]);
+  }).forEach(k=>{
+    const p=k.split('-');const y=+p[0],m=+p[1],d=+p[2];
+    const lbl={school:'วันเรียน',holiday:'วันหยุด',makeup:'ชดเชย',activity:'กิจกรรม',open:'เปิดเทอม',close:'ปิดเทอม'};
+    D.events[k].forEach(ev=>rows.push([d+' '+TM[m]+' '+(y+543),ev.name,lbl[ev.type]||ev.type,ev.note||'']));
+  });
+  dlCSV(rows,'ปฏิทินวิชาการ_รายละเอียดกิจกรรม_'+(calY+543)+'.csv');toast('ดาวน์โหลด Excel (รายละเอียด) แล้ว');
+}
+function printHTML(title,bodyHtml){
+  const w=window.open('','_blank');
+  w.document.write('<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><title>'+title+'</title><style>'+
+    'body{font-family:"Sarabun",sans-serif;padding:24px;color:#222}'+
+    'h1{font-size:18px;margin-bottom:4px;color:#1a5276}h2{font-size:13px;color:#666;font-weight:400;margin-bottom:16px}'+
+    'table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:18px}'+
+    'th{background:#eaf4fb;color:#1a5276;padding:8px;text-align:left;border:1px solid #ccc}'+
+    'td{padding:7px 8px;border:1px solid #ddd}'+
+    '@media print{button{display:none}}'+
+    '</style></head><body>'+
+    '<button onclick="window.print()" style="margin-bottom:14px;padding:8px 16px;background:#1a5276;color:#fff;border:none;border-radius:6px;cursor:pointer">พิมพ์ / บันทึกเป็น PDF</button>'+
+    bodyHtml+'</body></html>');
+  w.document.close();
+}
+function dlCalPDFSummary(){
+  let body='<h1>ปฏิทินวิชาการ — สรุปรายเดือน</h1><h2>ปีการศึกษา '+D.settings.yr+' | ปี พ.ศ. '+(calY+543)+'</h2>';
+  body+='<table><tr><th>เดือน</th><th>วันเรียน</th><th>วันหยุด</th><th>วันชดเชย</th><th>กิจกรรม</th><th>รวม</th></tr>';
+  let ts=0,th=0,tm=0,ta=0;
+  monthDayCounts(calY).forEach(r=>{
+    ts+=r.school;th+=r.holiday;tm+=r.makeup;ta+=r.activity;
+    body+='<tr><td>'+TM[r.m]+'</td><td>'+r.school+'</td><td>'+r.holiday+'</td><td>'+r.makeup+'</td><td>'+r.activity+'</td><td>'+(r.school+r.holiday+r.makeup+r.activity)+'</td></tr>';
+  });
+  body+='<tr style="font-weight:700;background:#f5f5f5"><td>รวมทั้งปี</td><td>'+ts+'</td><td>'+th+'</td><td>'+tm+'</td><td>'+ta+'</td><td>'+(ts+th+tm+ta)+'</td></tr></table>';
+  printHTML('ปฏิทินวิชาการ - สรุป',body);
+}
+function dlCalPDFDetail(){
+  let body='<h1>ปฏิทินวิชาการ — รายละเอียดกิจกรรม</h1><h2>ปีการศึกษา '+D.settings.yr+' | ปี พ.ศ. '+(calY+543)+'</h2>';
+  body+='<table><tr><th>วันที่</th><th>ชื่อกิจกรรม</th><th>ประเภท</th><th>หมายเหตุ</th></tr>';
+  const lbl={school:'วันเรียน',holiday:'วันหยุด',makeup:'ชดเชย',activity:'กิจกรรม',open:'เปิดเทอม',close:'ปิดเทอม'};
+  Object.keys(D.events).filter(k=>+k.split('-')[0]===calY).sort((a,b)=>{
+    const pa=a.split('-').map(Number),pb=b.split('-').map(Number);
+    return new Date(pa[0],pa[1],pa[2])-new Date(pb[0],pb[1],pb[2]);
+  }).forEach(k=>{
+    const p=k.split('-');const y=+p[0],m=+p[1],d=+p[2];
+    D.events[k].forEach(ev=>{
+      body+='<tr><td>'+d+' '+TM[m]+' '+(y+543)+'</td><td>'+ev.name+'</td><td>'+(lbl[ev.type]||ev.type)+'</td><td>'+(ev.note||'-')+'</td></tr>';
+    });
+  });
+  body+='</table>';
+  printHTML('ปฏิทินวิชาการ - รายละเอียด',body);
+}
+function dlStuCSV(){
+  const rows=[['รหัส','ชื่อ','นามสกุล','โรงเรียน','ชั้น','เพศ','สถานะ']];
+  D.students.forEach(s=>rows.push([s.id,s.fn,s.ln,s.sc,s.cl,s.gd,s.st]));
+  dlCSV(rows,'รายชื่อนักเรียน.csv');toast('ดาวน์โหลดรายชื่อนักเรียน (Excel) แล้ว');
+}
+function dlStuPDF(){
+  let body='<h1>รายชื่อนักเรียน</h1><h2>'+D.settings.s1+' / '+D.settings.s2+' | ปีการศึกษา '+D.settings.yr+'</h2>';
+  body+='<table><tr><th>รหัส</th><th>ชื่อ-สกุล</th><th>โรงเรียน</th><th>ชั้น</th><th>เพศ</th><th>สถานะ</th></tr>';
+  D.students.forEach(s=>{body+='<tr><td>'+s.id+'</td><td>'+s.fn+' '+s.ln+'</td><td>'+s.sc+'</td><td>'+s.cl+'</td><td>'+s.gd+'</td><td>'+s.st+'</td></tr>';});
+  body+='</table>';
+  printHTML('รายชื่อนักเรียน',body);
+}
+function dlSumCSV(){dlCSV([['วันที่','รายการ','ประเภท'],['13 พ.ค. 2569','วันเปิดเทอม ภาคเรียนที่ 1','เปิดเทอม'],['24 มิ.ย. 2569','วันสุนทรภู่','กิจกรรม'],['20 ก.ค. 2569','วันอาสาฬหบูชา','วันหยุด'],['21 ก.ค. 2569','วันเรียนชดเชย','ชดเชย'],['12 ส.ค. 2569','วันแม่แห่งชาติ','วันหยุด'],['30 ก.ย. 2569','วันปิดเทอม ภาคเรียนที่ 1','ปิดเทอม']],'สรุปวันเรียน.csv');toast('ดาวน์โหลด Excel แล้ว');}
+
+let sumSelY=new Date().getFullYear();
+function renderMonthSummary(){
+  const sel=document.getElementById('sum-yr-sel');
+  if(!sel.dataset.init){
+    const cur=new Date().getFullYear();
+    for(let y=cur-3;y<=cur+3;y++){const o=document.createElement('option');o.value=y;o.textContent=y+543;if(y===sumSelY)o.selected=true;sel.appendChild(o);}
+    sel.dataset.init='1';
+  }
+  sumSelY=+sel.value||sumSelY;
+  const body=document.getElementById('month-sum-body');
+  let html='',ts=0,th=0,tm=0,ta=0;
+  monthDayCounts(sumSelY).forEach(r=>{
+    ts+=r.school;th+=r.holiday;tm+=r.makeup;ta+=r.activity;
+    html+='<tr><td>'+TM[r.m]+'</td><td>'+r.school+'</td><td><span style="color:var(--r)">'+r.holiday+'</span></td><td><span style="color:var(--o)">'+r.makeup+'</span></td><td><span style="color:var(--g)">'+r.activity+'</span></td><td style="font-weight:600">'+(r.school+r.holiday+r.makeup+r.activity)+'</td></tr>';
+  });
+  html+='<tr style="font-weight:700;background:var(--b4)"><td>รวมทั้งปี</td><td>'+ts+'</td><td>'+th+'</td><td>'+tm+'</td><td>'+ta+'</td><td>'+(ts+th+tm+ta)+'</td></tr>';
+  body.innerHTML=html;
+}
+function dlMonthSumCSV(){
+  const rows=[['เดือน','วันเรียน','วันหยุด','วันชดเชย','กิจกรรม','รวม']];
+  monthDayCounts(sumSelY).forEach(r=>rows.push([TM[r.m],r.school,r.holiday,r.makeup,r.activity,r.school+r.holiday+r.makeup+r.activity]));
+  dlCSV(rows,'สรุปวันเรียนรายเดือน_'+(sumSelY+543)+'.csv');toast('ดาวน์โหลด Excel แล้ว');
+}
+
+// ═══════════════════════════════════════
+//  STUDENTS
+// ═══════════════════════════════════════
+let editStuId=null;
+function renderStu(list){
+  const data=list||D.students;
+  document.getElementById('stu-body').innerHTML=data.map(s=>'<tr><td style="font-family:monospace;font-size:10px;color:var(--b)">'+s.id+'</td><td style="font-weight:500">'+s.fn+' '+s.ln+'</td><td><span class="bdg '+(s.sc.includes('หนองทุ่ม')?'b':'r')+'" style="font-size:9px">'+(s.sc.includes('หนองทุ่ม')?'หนองทุ่มฯ':'โนนคูณฯ')+'</span></td><td><span class="bdg b">'+s.cl+'</span></td><td>'+(s.gd==='ชาย'?'<i class="ti ti-gender-male" style="color:var(--b)"></i>':'<i class="ti ti-gender-female" style="color:var(--r)"></i>')+' '+s.gd+'</td><td><span class="bdg '+(s.st==='กำลังศึกษา'?'g':s.st==='ลาออก'?'r':'o')+'">'+s.st+'</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editStu(\''+s.id+'\')"><i class="ti ti-edit"></i></button> <button class="btn r sm" onclick="delStu(\''+s.id+'\')"><i class="ti ti-trash"></i></button></td></tr>').join('');
+}
+function fstu(){
+  const q=document.getElementById('sq').value.toLowerCase(),sch=document.getElementById('ssc').value,cl=document.getElementById('scl').value;
+  renderStu(D.students.filter(s=>(!q||(s.fn+s.ln+s.id).toLowerCase().includes(q))&&(!sch||s.sc.includes(sch))&&(!cl||s.cl===cl)));
+}
+function openStuM(){editStuId=null;['sfn','sln'].forEach(id=>document.getElementById(id).value='');openOv('ov-stu');}
+function editStu(id){
+  const s=D.students.find(x=>x.id===id);if(!s)return;editStuId=id;
+  document.getElementById('sfn').value=s.fn;document.getElementById('sln').value=s.ln;
+  document.getElementById('ssc2').value=s.sc;document.getElementById('scl2').value=s.cl;
+  document.getElementById('sgd').value=s.gd;document.getElementById('sst').value=s.st;
+  openOv('ov-stu');
+}
+function delStu(id){if(!confirm('ยืนยันลบนักเรียน?'))return;D.students=D.students.filter(x=>x.id!==id);save();renderStu();toast('ลบนักเรียนแล้ว');}
+function saveStu(){
+  const fn=document.getElementById('sfn').value.trim(),ln=document.getElementById('sln').value.trim();
+  if(!fn||!ln){toast('กรุณากรอกชื่อ-นามสกุล',false);return;}
+  const obj={id:editStuId||String(Date.now()).slice(-4),fn,ln,sc:document.getElementById('ssc2').value,cl:document.getElementById('scl2').value,gd:document.getElementById('sgd').value,st:document.getElementById('sst').value};
+  if(editStuId){const i=D.students.findIndex(x=>x.id===editStuId);D.students[i]=obj;}else D.students.push(obj);
+  save();closeOv('ov-stu');renderStu();toast(editStuId?'แก้ไขนักเรียนแล้ว':'เพิ่มนักเรียนแล้ว');popSenders();
+}
+
+// ═══════════════════════════════════════
+//  PERSONNEL
+// ═══════════════════════════════════════
+let editPerId=null;
+function ini(n){return n.replace(/^(นาย|นาง|นางสาว|ดร\.|รศ\.)/,'').trim().slice(0,2);}
+function renderPer(){
+  const dept=document.getElementById('dfl')?.value||'';
+  const card=p=>'<div class="pcard"><div class="av '+p.color+'">'+(p.photo?'<img src="'+p.photo+'" alt="'+p.name+'">':ini(p.name))+'</div><div class="pn">'+p.name+'</div><div class="pr">'+p.role+'</div>'+(p.type==='teacher'?'<div class="ps">'+p.dept+'</div>':'')+'<div style="display:flex;gap:4px;margin-top:8px;justify-content:center"><button class="btn sm" onclick="editPer(\''+p.id+'\')"><i class="ti ti-edit"></i></button><button class="btn r sm" onclick="delPer(\''+p.id+'\')"><i class="ti ti-trash"></i></button></div></div>';
+  document.getElementById('pg-admin').innerHTML=D.personnel.filter(p=>p.type==='admin').map(card).join('');
+  document.getElementById('pg-teachers').innerHTML=D.personnel.filter(p=>p.type==='teacher'&&(!dept||p.dept===dept)).map(card).join('');
+  document.getElementById('per-chip').textContent=D.personnel.length+' คน';
+  document.getElementById('per-n').textContent=D.personnel.length;
+}
+let pendPerPhoto=null;
+function prevPerPhoto(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{pendPerPhoto=ev.target.result;document.getElementById('pphoto-prev').innerHTML='<img src="'+pendPerPhoto+'" style="width:60px;height:60px;border-radius:50%;object-fit:cover">';};
+  r.readAsDataURL(f);
+}
+function openPerM(){editPerId=null;pendPerPhoto=null;['pname','prole'].forEach(id=>document.getElementById(id).value='');document.getElementById('pphoto-prev').innerHTML='';document.getElementById('pphoto').value='';openOv('ov-per');}
+function editPer(id){
+  const p=D.personnel.find(x=>x.id===id);if(!p)return;editPerId=id;pendPerPhoto=p.photo||null;
+  document.getElementById('pname').value=p.name;document.getElementById('prole').value=p.role;
+  document.getElementById('pdept').value=p.dept;document.getElementById('ptype').value=p.type;document.getElementById('pclr').value=p.color;
+  document.getElementById('pphoto-prev').innerHTML=p.photo?'<img src="'+p.photo+'" style="width:60px;height:60px;border-radius:50%;object-fit:cover">':'';
+  document.getElementById('pphoto').value='';
+  openOv('ov-per');
+}
+function delPer(id){if(!confirm('ยืนยันลบบุคลากร?'))return;D.personnel=D.personnel.filter(x=>x.id!==id);save();renderPer();toast('ลบบุคลากรแล้ว');}
+function savePer(){
+  const name=document.getElementById('pname').value.trim(),role=document.getElementById('prole').value.trim();
+  if(!name){toast('กรุณากรอกชื่อ',false);return;}
+  const obj={id:editPerId||('p'+Date.now()),name,role,dept:document.getElementById('pdept').value,type:document.getElementById('ptype').value,color:document.getElementById('pclr').value,photo:pendPerPhoto};
+  if(editPerId){const i=D.personnel.findIndex(x=>x.id===editPerId);D.personnel[i]=obj;}else D.personnel.push(obj);
+  save();closeOv('ov-per');renderPer();toast(editPerId?'แก้ไขแล้ว':'เพิ่มบุคลากรแล้ว');
+}
+
+// ═══════════════════════════════════════
+//  SUBMIT
+// ═══════════════════════════════════════
+let pendF=[];
+function popSenders(){
+  const sel=document.getElementById('sub-sdr');
+  sel.innerHTML='<option value="">-- เลือกชื่อผู้ส่ง --</option>';
+  D.students.forEach(s=>sel.insertAdjacentHTML('beforeend','<option value="'+s.fn+' '+s.ln+'">'+s.fn+' '+s.ln+' ('+s.cl+'-'+(s.sc.includes('หนองทุ่ม')?'หนองทุ่มฯ':'โนนคูณฯ')+')</option>'));
+  D.personnel.forEach(p=>sel.insertAdjacentHTML('beforeend','<option value="'+p.name+'">'+p.name+' ('+p.role+')</option>'));
+}
+function hf(e){Array.from(e.target.files).forEach(addF);}
+function dov(e){e.preventDefault();document.getElementById('upz').classList.add('dg');}
+function dlv(){document.getElementById('upz').classList.remove('dg');}
+function droF(e){e.preventDefault();dlv();Array.from(e.dataTransfer.files).forEach(addF);}
+function fIcon(n){return n.endsWith('.pdf')?'ti-file-type-pdf':n.match(/\.(doc|docx)$/)?'ti-file-type-doc':n.match(/\.(xls|xlsx)$/)?'ti-file-type-xls':n.match(/\.(ppt|pptx)$/)?'ti-file-type-ppt':'ti-photo';}
+function addF(f){
+  pendF.push(f);
+  const idx=pendF.length-1,el=document.createElement('div');el.className='fc';el.id='pf'+idx;
+  el.innerHTML='<i class="ti '+fIcon(f.name)+'" style="color:var(--b);font-size:18px"></i><div style="flex:1"><div style="font-size:12px;font-weight:500">'+f.name+'</div><div style="font-size:10px;color:var(--gy)">'+(f.size/1024).toFixed(0)+' KB</div></div><span onclick="rmF('+idx+')" style="cursor:pointer;color:var(--r);padding:4px"><i class="ti ti-x"></i></span>';
+  document.getElementById('flist').appendChild(el);
+}
+function rmF(idx){pendF[idx]=null;const el=document.getElementById('pf'+idx);if(el)el.remove();}
+function clrSub(){pendF=[];document.getElementById('flist').innerHTML='';['sub-t','sub-d','sub-due'].forEach(id=>document.getElementById(id).value='');document.getElementById('sub-sdr').value='';document.getElementById('fi').value='';}
+
+async function submitW(){
+  const ttl=document.getElementById('sub-t').value.trim();
+  const sndr=document.getElementById('sub-sdr').value;
+  const files=pendF.filter(Boolean);
+  if(!ttl){toast('กรุณาระบุชื่องาน',false);return;}
+  if(!sndr){toast('กรุณาเลือกชื่อผู้ส่ง',false);return;}
+  if(!files.length){toast('กรุณาแนบไฟล์อย่างน้อย 1 ไฟล์',false);return;}
+  toast('กำลังดำเนินการ...');
+  const today=new Date(),fObjs=[];
+  for(const f of files){
+    const localUrl=URL.createObjectURL(f);
+    let driveUrl=null,driveId=null;
+    if(driveOn){
+      toast('อัปโหลด '+f.name+' → Google Drive...');
+      const res=await driveUpload(f);
+      if(res&&res.webViewLink){driveUrl=res.webViewLink;driveId=res.id;}
+    }
+    fObjs.push({n:f.name,s:(f.size/1024).toFixed(0)+' KB',ic:fIcon(f.name),url:localUrl,driveUrl,driveId});
+  }
+  D.submissions.unshift({id:Date.now(),ttl,desc:document.getElementById('sub-d').value,sndr,due:document.getElementById('sub-due').value,files:fObjs,date:thDate(today),driveUsed:driveOn});
+  save();clrSub();renderHist();
+  toast(driveOn?'ส่งงานสำเร็จ! ✓ บันทึกใน Google Drive แล้ว':'ส่งงานสำเร็จ! (เก็บชั่วคราวในเบราว์เซอร์)');
+}
+function renderHist(){
+  const el=document.getElementById('sub-hist');
+  if(!D.submissions.length){el.innerHTML='<div style="text-align:center;padding:30px;color:var(--gy)"><i class="ti ti-inbox" style="font-size:28px;display:block;margin-bottom:6px"></i>ยังไม่มีงานที่ส่ง</div>';return;}
+  el.innerHTML=D.submissions.map(s=>'<div class="subc"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:5px"><div><div style="font-size:13px;font-weight:600">'+s.ttl+'</div><div style="font-size:10px;color:var(--gy)"><i class="ti ti-user" style="font-size:9px"></i> '+s.sndr+' | '+s.date+(s.driveUsed?' <i class="ti ti-brand-google-drive" style="color:#34a853;font-size:10px"></i>':'')+'</div></div><div style="display:flex;gap:5px;align-items:center;flex-shrink:0"><span class="bdg g"><i class="ti ti-check" style="font-size:9px"></i> ส่งแล้ว</span><button class="btn r sm" onclick="delSub('+s.id+')"><i class="ti ti-trash"></i></button></div></div>'+(s.desc?'<div style="font-size:11px;color:#666;margin-bottom:5px">'+s.desc+'</div>':'')+'<div style="display:flex;flex-wrap:wrap;gap:5px">'+s.files.map(f=>'<a class="sf" href="'+(f.driveUrl||f.url||'#')+'" '+(f.driveUrl?'target="_blank"':'download="'+f.n+'"')+' title="'+(f.driveUrl?'เปิดใน Google Drive':'ดาวน์โหลดไฟล์')+'"><i class="ti '+f.ic+'"></i>'+f.n+(f.driveUrl?' <i class="ti ti-brand-google-drive" style="font-size:9px;color:#34a853"></i>':'<i class="ti ti-download" style="font-size:9px;opacity:.6"></i>')+'</a>').join('')+'</div>'+(s.due?'<div style="font-size:10px;color:var(--gy);margin-top:5px"><i class="ti ti-calendar" style="font-size:9px"></i> กำหนดส่ง: '+s.due+'</div>':'')+'</div>').join('');
+}
+function delSub(id){if(!confirm('ยืนยันลบงานที่ส่ง?'))return;D.submissions=D.submissions.filter(s=>s.id!==id);save();renderHist();toast('ลบงานแล้ว');}
+
+// ═══════════════════════════════════════
+//  RESOURCE LIBRARY (คลังทรัพยากรโรงเรียน)
+// ═══════════════════════════════════════
+let editPortId=null,pendPortFile=null,portFilterCat='';
+function openPortM(){
+  editPortId=null;pendPortFile=null;
+  ['port-ttl','port-desc','port-owner','port-link'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('port-dt').value=new Date().toISOString().slice(0,10);
+  document.getElementById('port-cat').value='cert';
+  document.getElementById('port-file-name').textContent='';document.getElementById('port-file').value='';
+  document.getElementById('port-mt').textContent='เพิ่มรายการ';
+  openOv('ov-port');
+}
+function editPort(id){
+  const p=D.portfolio.find(x=>x.id===id);if(!p)return;
+  editPortId=id;pendPortFile=p.fileData||null;
+  document.getElementById('port-mt').textContent='แก้ไขรายการ';
+  document.getElementById('port-ttl').value=p.ttl;document.getElementById('port-desc').value=p.desc||'';
+  document.getElementById('port-cat').value=p.cat;document.getElementById('port-owner').value=p.owner||'';
+  document.getElementById('port-dt').value=p.dt||'';document.getElementById('port-link').value=p.link||'';
+  document.getElementById('port-file-name').textContent=p.fileName?'ไฟล์แนบเดิม: '+p.fileName:'';
+  document.getElementById('port-file').value='';
+  openOv('ov-port');
+}
+function delPort(id){if(!confirm('ยืนยันลบรายการนี้?'))return;D.portfolio=D.portfolio.filter(x=>x.id!==id);save();renderPort();toast('ลบรายการแล้ว');}
+async function savePort(){
+  const ttl=document.getElementById('port-ttl').value.trim();
+  if(!ttl){toast('กรุณากรอกชื่อรายการ',false);return;}
+  const link=document.getElementById('port-link').value.trim();
+  const fileInput=document.getElementById('port-file');
+  let fileName=editPortId?(D.portfolio.find(x=>x.id===editPortId)?.fileName||null):null;
+  let fileData=pendPortFile;
+  if(fileInput.files[0]){
+    const f=fileInput.files[0];fileName=f.name;
+    fileData=await new Promise(res=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.readAsDataURL(f);});
+  }
+  if(!link&&!fileData){toast('กรุณาใส่ลิงก์ไฟล์ หรือแนบไฟล์อย่างใดอย่างหนึ่ง',false);return;}
+  const obj={
+    id:editPortId||('pf'+Date.now()),
+    ttl,desc:document.getElementById('port-desc').value.trim(),
+    cat:document.getElementById('port-cat').value,
+    owner:document.getElementById('port-owner').value.trim(),
+    dt:document.getElementById('port-dt').value,
+    link,fileName,fileData
+  };
+  if(editPortId){const i=D.portfolio.findIndex(x=>x.id===editPortId);D.portfolio[i]=obj;}else D.portfolio.unshift(obj);
+  save();closeOv('ov-port');renderPort();toast(editPortId?'แก้ไขรายการแล้ว':'เพิ่มรายการแล้ว');
+}
+function filterPort(cat,btn){
+  portFilterCat=cat;
+  document.querySelectorAll('.port-fbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderPort();
+}
+function renderPort(){
+  const list=document.getElementById('port-list');
+  const q=(document.getElementById('port-q')?.value||'').toLowerCase();
+  const data=D.portfolio.filter(p=>(!portFilterCat||p.cat===portFilterCat)&&(!q||(p.ttl+' '+(p.desc||'')+' '+(p.owner||'')).toLowerCase().includes(q)));
+  if(!data.length){list.innerHTML='<div style="text-align:center;padding:30px;color:var(--gy)"><i class="ti ti-folder-x" style="font-size:28px;display:block;margin-bottom:6px"></i>ยังไม่มีรายการในคลังทรัพยากร</div>';return;}
+  const catLbl={cert:'เกียรติบัตร',form:'ฟอร์มแบบบันทึก',doc:'เอกสารราชการ',other:'อื่นๆ'};
+  const catIcon={cert:'ti-certificate',form:'ti-forms',doc:'ti-file-text',other:'ti-dots'};
+  list.innerHTML=data.map(p=>{
+    const dateStr=p.dt?thDate(new Date(p.dt)):'';
+    return '<div class="pri">'+
+      '<div class="pri-icon '+p.cat+'"><i class="ti '+catIcon[p.cat]+'"></i></div>'+
+      '<div class="pri-body">'+
+      '<div class="pri-ttl">'+p.ttl+'</div>'+
+      (p.desc?'<div class="pri-desc">'+p.desc+'</div>':'')+
+      '<div class="pri-meta"><span class="pri-cat '+p.cat+'">'+catLbl[p.cat]+'</span>'+
+      (p.owner?'<span><i class="ti ti-user" style="font-size:9px"></i> '+p.owner+'</span>':'')+
+      (dateStr?'<span><i class="ti ti-calendar" style="font-size:9px"></i> '+dateStr+'</span>':'')+
+      '</div></div>'+
+      '<div class="pri-acts">'+
+      (p.link?'<a class="sf" href="'+p.link+'" target="_blank"><i class="ti ti-link"></i>เปิดลิงก์</a>':'')+
+      (p.fileData?'<a class="sf" href="'+p.fileData+'" download="'+p.fileName+'"><i class="ti ti-paperclip"></i>'+p.fileName+'</a>':'')+
+      '<button class="btn sm" onclick="editPort(\''+p.id+'\')"><i class="ti ti-edit"></i></button>'+
+      '<button class="btn r sm" onclick="delPort(\''+p.id+'\')"><i class="ti ti-trash"></i></button>'+
+      '</div></div>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════
+document.querySelectorAll('.ov').forEach(ov=>ov.addEventListener('click',e=>{if(e.target===ov)ov.classList.remove('on');}));
+applySettings();
+initCS();renderStu();renderPer();renderHist();popSenders();
+document.getElementById('ss1').value=D.settings.s1;document.getElementById('ss2').value=D.settings.s2;
+document.getElementById('sn1').value=D.settings.n1;document.getElementById('sn2').value=D.settings.n2;
+document.getElementById('sper').value=D.settings.nper;document.getElementById('syr').value=D.settings.yr;
+document.getElementById('gcid').value=D.settings.gcid||'';document.getElementById('gkey').value=D.settings.gkey||'';
+if(D.settings.gcid&&D.settings.gkey)initGapi();
+</script>
+</body>
+</html>
