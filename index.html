@@ -222,16 +222,9 @@ body{font-family:'Sarabun',sans-serif;background:#f0f2f5;font-size:13px;color:#2
   <div class="card">
     <div class="ch">
       <h3><i class="ti ti-users" style="color:var(--b)"></i>ข้อมูลนักเรียน</h3>
-      <div style="display:flex;gap:6px;flex-wrap:wrap">
-        <input type="text" id="sq" placeholder="ค้นหาชื่อ..." oninput="fstu()" style="border:1px solid var(--bdr);border-radius:8px;padding:5px 10px;font-size:12px;outline:none;width:120px">
-        <select id="ssc" onchange="fstu()" style="border:1px solid var(--bdr);border-radius:8px;padding:5px 8px;font-size:12px;outline:none"><option value="">ทุกโรงเรียน</option><option>บ้านหนองทุ่มวิทยา</option><option>โนนคูณอัมพวัน</option></select>
-        <select id="scl" onchange="fstu()" style="border:1px solid var(--bdr);border-radius:8px;padding:5px 8px;font-size:12px;outline:none"><option value="">ทุกชั้น</option><option>ป.1</option><option>ป.2</option><option>ป.3</option><option>ป.4</option><option>ป.5</option><option>ป.6</option></select>
-        <button class="btn p sm" onclick="openStuM()"><i class="ti ti-plus"></i>เพิ่ม</button>
-        <button class="btn g sm" onclick="dlStuCSV()"><i class="ti ti-table"></i>ดาวน์โหลดรายชื่อ (Excel)</button>
-        <button class="btn g sm" onclick="dlStuPDF()"><i class="ti ti-file-type-pdf"></i>ดาวน์โหลด PDF</button>
-      </div>
+      <button class="btn p sm" onclick="openStuYrM()"><i class="ti ti-plus"></i>เพิ่มข้อมูลปีการศึกษา</button>
     </div>
-    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>รหัส</th><th>ชื่อ-สกุล</th><th>โรงเรียน</th><th>ชั้น</th><th>เพศ</th><th>สถานะ</th><th>จัดการ</th></tr></thead><tbody id="stu-body"></tbody></table></div>
+    <div class="cb" id="stuyr-list" style="display:flex;flex-direction:column;gap:10px"></div>
   </div>
 </div>
 
@@ -247,7 +240,7 @@ body{font-family:'Sarabun',sans-serif;background:#f0f2f5;font-size:13px;color:#2
       <button class="btn g sm" onclick="dlCalCSVSummary()"><i class="ti ti-table"></i>Excel สรุป</button>
       <button class="btn g sm" onclick="dlCalCSVDetail()"><i class="ti ti-table"></i>Excel รายละเอียด</button>
       <button class="btn g sm" onclick="dlCalPDFSummary()"><i class="ti ti-file-type-pdf"></i>PDF สรุป</button>
-      <button class="btn g sm" onclick="dlCalPDFDetail()"><i class="ti ti-file-type-pdf"></i>PDF รายละเอียด</button>
+      <button class="btn g sm" onclick="dlCalPDFDetail()"><i class="ti ti-file-type-pdf"></i>PDF ฉบับเต็ม (ตาราง+รายละเอียด)</button>
       <button class="btn p sm" onclick="openEvM()"><i class="ti ti-plus"></i>เพิ่มกิจกรรม</button>
     </div>
     <h3 id="cal-ttl" style="font-size:15px;font-weight:600;margin-bottom:10px"></h3>
@@ -286,7 +279,9 @@ body{font-family:'Sarabun',sans-serif;background:#f0f2f5;font-size:13px;color:#2
     <button class="btn p sm" onclick="openPerM()"><i class="ti ti-plus"></i>เพิ่มบุคลากร</button>
   </div>
   <div class="card" style="margin-bottom:14px"><div class="ch"><h3 style="color:var(--b)"><i class="ti ti-crown"></i>ผู้บริหาร</h3></div><div class="cb"><div class="pgrid" id="pg-admin"></div></div></div>
-  <div class="card"><div class="ch"><h3 style="color:var(--g)"><i class="ti ti-chalkboard"></i>คณะครูและบุคลากร</h3><select id="dfl" onchange="renderPer()" style="border:1px solid var(--bdr);border-radius:8px;padding:4px 8px;font-size:11px;outline:none"><option value="">ทุกกลุ่มสาระ</option><option>คณิตศาสตร์</option><option>ภาษาไทย</option><option>วิทยาศาสตร์</option><option>ภาษาต่างประเทศ</option><option>สังคมศึกษา</option><option>พลศึกษา</option><option>สนับสนุน</option></select></div><div class="cb"><div class="pgrid" id="pg-teachers"></div></div></div>
+  <div class="card" style="margin-bottom:14px"><div class="ch"><h3 style="color:var(--g)"><i class="ti ti-chalkboard"></i>ครู</h3><select id="dfl" onchange="renderPer()" style="border:1px solid var(--bdr);border-radius:8px;padding:4px 8px;font-size:11px;outline:none"><option value="">ทุกกลุ่มสาระ</option></select></div><div class="cb"><div class="pgrid" id="pg-teachers"></div></div></div>
+  <div class="card" style="margin-bottom:14px"><div class="ch"><h3 style="color:var(--o)"><i class="ti ti-briefcase"></i>บุคลากร</h3></div><div class="cb"><div class="pgrid" id="pg-staff"></div></div></div>
+  <div class="card"><div class="ch"><h3 style="color:var(--gy)"><i class="ti ti-dots"></i>อื่นๆ</h3></div><div class="cb"><div class="pgrid" id="pg-other"></div></div></div>
 </div>
 
 <!-- SUBMIT -->
@@ -385,14 +380,14 @@ body{font-family:'Sarabun',sans-serif;background:#f0f2f5;font-size:13px;color:#2
   <div class="mbts"><button class="btn" onclick="closeOv('ov-ann')">ยกเลิก</button><button class="btn p" onclick="saveAnn()">บันทึก</button></div>
 </div></div>
 
-<!-- Student -->
+<!-- Student Info by Year -->
 <div class="ov" id="ov-stu"><div class="mbox">
-  <h3><i class="ti ti-user-plus" style="color:var(--b)"></i>เพิ่ม/แก้ไขนักเรียน</h3>
-  <input type="hidden" id="stu-eid">
-  <div class="fr"><div class="fg"><label>ชื่อ</label><input type="text" id="sfn" placeholder="ชื่อ"></div><div class="fg"><label>นามสกุล</label><input type="text" id="sln" placeholder="นามสกุล"></div></div>
-  <div class="fr"><div class="fg"><label>โรงเรียน</label><select id="ssc2"><option>บ้านหนองทุ่มวิทยา</option><option>โนนคูณอัมพวัน</option></select></div><div class="fg"><label>ชั้น</label><select id="scl2"><option>ป.1</option><option>ป.2</option><option>ป.3</option><option>ป.4</option><option>ป.5</option><option>ป.6</option></select></div></div>
-  <div class="fr"><div class="fg"><label>เพศ</label><select id="sgd"><option>ชาย</option><option>หญิง</option></select></div><div class="fg"><label>สถานะ</label><select id="sst"><option>กำลังศึกษา</option><option>ลาออก</option><option>โอนย้าย</option></select></div></div>
-  <div class="mbts"><button class="btn" onclick="closeOv('ov-stu')">ยกเลิก</button><button class="btn p" onclick="saveStu()">บันทึก</button></div>
+  <h3><i class="ti ti-users" style="color:var(--b)"></i><span id="stuyr-mt">เพิ่มข้อมูลปีการศึกษา</span></h3>
+  <div class="fr"><div class="fg"><label>ปีการศึกษา</label><input type="text" id="stuyr-yr" placeholder="เช่น 2569"></div><div class="fg"><label>วันที่ประกาศ</label><input type="date" id="stuyr-dt"></div></div>
+  <div class="fg"><label>หัวข้อ/รายละเอียด</label><input type="text" id="stuyr-ttl" placeholder="เช่น ข้อมูลนักเรียนรายบุคคล ปีการศึกษา 2569"></div>
+  <div class="fg"><label>ลิงก์ (Google Sheet / Drive)</label><input type="url" id="stuyr-link" placeholder="https://..."></div>
+  <div class="fg"><label>หรือแนบไฟล์ (ถ้ามี)</label><input type="file" id="stuyr-file" onchange="prevStuYrFile(event)"><div id="stuyr-file-prev" style="margin-top:6px;font-size:12px;color:var(--gy)"></div></div>
+  <div class="mbts"><button class="btn" onclick="closeOv('ov-stu')">ยกเลิก</button><button class="btn p" onclick="saveStuYr()">บันทึก</button></div>
 </div></div>
 
 <!-- Event -->
@@ -411,8 +406,8 @@ body{font-family:'Sarabun',sans-serif;background:#f0f2f5;font-size:13px;color:#2
   <input type="hidden" id="per-eid">
   <div class="fg"><label>ชื่อ-สกุล</label><input type="text" id="pname" placeholder="ชื่อเต็ม"></div>
   <div class="fg"><label>รูปภาพ</label><input type="file" id="pphoto" accept="image/*" onchange="prevPerPhoto(event)"><div id="pphoto-prev" style="margin-top:8px"></div></div>
-  <div class="fr"><div class="fg"><label>ตำแหน่ง</label><input type="text" id="prole" placeholder="ครูผู้สอน / ผอ."></div><div class="fg"><label>กลุ่มสาระ</label><select id="pdept"><option>คณิตศาสตร์</option><option>ภาษาไทย</option><option>วิทยาศาสตร์</option><option>ภาษาต่างประเทศ</option><option>สังคมศึกษา</option><option>พลศึกษา</option><option>สนับสนุน</option></select></div></div>
-  <div class="fr"><div class="fg"><label>ประเภท</label><select id="ptype"><option value="teacher">ครู/บุคลากร</option><option value="admin">ผู้บริหาร</option></select></div><div class="fg"><label>สีอวาตาร์</label><select id="pclr"><option value="b">น้ำเงิน</option><option value="g">เขียว</option><option value="o">ส้ม</option><option value="r">แดง</option></select></div></div>
+  <div class="fr"><div class="fg"><label>ตำแหน่ง</label><input type="text" id="prole" placeholder="ครูผู้สอน / ผอ."></div><div class="fg"><label>กลุ่มสาระ</label><input type="text" id="pdept" list="dept-list" placeholder="เช่น ปฐมวัย, คณิตศาสตร์-วิทยาศาสตร์"><datalist id="dept-list"><option>ปฐมวัย</option><option>คณิตศาสตร์</option><option>ภาษาไทย</option><option>วิทยาศาสตร์</option><option>ภาษาต่างประเทศ</option><option>สังคมศึกษา</option><option>พลศึกษา</option><option>ศิลปะ</option><option>การงานอาชีพ</option><option>สนับสนุน</option></datalist></div></div>
+  <div class="fr"><div class="fg"><label>ประเภท</label><select id="ptype"><option value="admin">ผู้บริหาร</option><option value="teacher">ครู</option><option value="staff">บุคลากร</option><option value="other">อื่นๆ</option></select></div><div class="fg"><label>สีอวาตาร์</label><input type="color" id="pclr" value="#1a5276" style="width:100%;height:36px;border:1px solid var(--bdr);border-radius:8px;padding:2px;cursor:pointer"></div></div>
   <div class="mbts"><button class="btn" onclick="closeOv('ov-per')">ยกเลิก</button><button class="btn p" onclick="savePer()">บันทึก</button></div>
 </div></div>
 
@@ -430,14 +425,7 @@ const DS=['อา','จ','อ','พ','พฤ','ศ','ส'];
 let D = {
   settings:{s1:'โรงเรียนบ้านหนองทุ่มวิทยา',s2:'โรงเรียนโนนคูณอัมพวัน (เรียนรวม)',n1:42,n2:17,nper:10,yr:'2569',gcid:'',gkey:''},
   events:{'2026-4-13':[{name:'วันเปิดเทอม ภาคเรียนที่ 1',type:'open'}],'2026-5-3':[{name:'วันฉัตรมงคล',type:'holiday'}],'2026-6-23':[{name:'วันสุนทรภู่',type:'activity'}],'2026-7-19':[{name:'วันอาสาฬหบูชา',type:'holiday'}],'2026-7-21':[{name:'วันเรียนชดเชย',type:'makeup'}],'2026-8-12':[{name:'วันแม่แห่งชาติ',type:'holiday'}],'2026-9-30':[{name:'วันปิดเทอม ภาคเรียนที่ 1',type:'close'}]},
-  students:[
-    {id:'6701',fn:'สมชาย',ln:'ใจดี',sc:'บ้านหนองทุ่มวิทยา',cl:'ป.6',gd:'ชาย',st:'กำลังศึกษา'},
-    {id:'6702',fn:'นภาพร',ln:'สุขสม',sc:'บ้านหนองทุ่มวิทยา',cl:'ป.5',gd:'หญิง',st:'กำลังศึกษา'},
-    {id:'6703',fn:'กิตติพงศ์',ln:'มั่นคง',sc:'บ้านหนองทุ่มวิทยา',cl:'ป.4',gd:'ชาย',st:'กำลังศึกษา'},
-    {id:'6704',fn:'วริษา',ln:'แสงดี',sc:'บ้านหนองทุ่มวิทยา',cl:'ป.3',gd:'หญิง',st:'กำลังศึกษา'},
-    {id:'6705',fn:'ธนากร',ln:'ดีงาม',sc:'โนนคูณอัมพวัน',cl:'ป.6',gd:'ชาย',st:'กำลังศึกษา'},
-    {id:'6706',fn:'สุดารัตน์',ln:'ทองใบ',sc:'โนนคูณอัมพวัน',cl:'ป.5',gd:'หญิง',st:'กำลังศึกษา'},
-  ],
+  studentInfo:[],
   personnel:[
     {id:'p1',name:'ดร.นวลจันทร์ วงศ์ดี',role:'ผู้อำนวยการโรงเรียน',dept:'ผู้บริหาร',type:'admin',color:'b'},
     {id:'p2',name:'นายสมชาย ขยันดี',role:'รองผู้อำนวยการ',dept:'ผู้บริหาร',type:'admin',color:'g'},
@@ -448,7 +436,7 @@ let D = {
     {id:'p7',name:'นางจิราภา รุ่งโรจน์',role:'ครูผู้สอน',dept:'สังคมศึกษา',type:'teacher',color:'g'},
     {id:'p8',name:'นายสุรชัย แข็งแรง',role:'ครูผู้สอน',dept:'พลศึกษา',type:'teacher',color:'b'},
     {id:'p9',name:'นางสาวปิยะมาศ ใจงาม',role:'ครูผู้สอน',dept:'คณิตศาสตร์',type:'teacher',color:'o'},
-    {id:'p10',name:'นายมานะ ตั้งใจ',role:'เจ้าหน้าที่ธุรการ',dept:'สนับสนุน',type:'teacher',color:'r'},
+    {id:'p10',name:'นายมานะ ตั้งใจ',role:'เจ้าหน้าที่ธุรการ',dept:'สนับสนุน',type:'staff',color:'r'},
   ],
   submissions:[],
   portfolio:[],
@@ -506,7 +494,7 @@ function go(p,el){
   if(el)el.classList.add('on');
   document.querySelectorAll('.ov').forEach(o=>o.classList.remove('on'));
   if(p==='cal'){initCS();renderCal();}
-  if(p==='stu')renderStu();
+  if(p==='stu')renderStuYr();
   if(p==='per')renderPer();
   if(p==='sub'){renderHist();popSenders();}
   if(p==='sum')renderMonthSummary();
@@ -793,6 +781,31 @@ function monthDayCounts(y){
   }
   return res;
 }
+function buildCalGridHTML(y){
+  let html='<div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px">';
+  for(let m=0;m<12;m++){
+    const first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate();
+    html+='<div style="width:31.5%;min-width:210px">';
+    html+='<div style="text-align:center;font-weight:700;background:#1a5276;color:#fff;padding:5px;border-radius:5px 5px 0 0;font-size:11px">'+TM[m]+' '+(y+543)+'</div>';
+    html+='<table style="width:100%;border-collapse:collapse;font-size:9px;margin-bottom:0"><tr>'+DS.map(d=>'<th style="padding:3px;background:#eaf4fb;border:1px solid #ccc">'+d+'</th>').join('')+'</tr>';
+    const cells=[];
+    for(let i=0;i<first;i++)cells.push('<td style="border:1px solid #eee;padding:2px;height:24px"></td>');
+    for(let d=1;d<=days;d++){
+      const key=ek(y,m,d);
+      let bg='#fff';
+      if(D.events[key]&&D.events[key].length){
+        const t=D.events[key][0].type;
+        bg=t==='holiday'?'#fdedec':t==='makeup'?'#fef9e7':t==='activity'?'#d6eaf8':(t==='open'||t==='close')?'#d4e6f1':'#fff';
+      }
+      cells.push('<td style="border:1px solid #ddd;padding:2px;vertical-align:top;height:24px;background:'+bg+'">'+d+'</td>');
+    }
+    while(cells.length%7!==0)cells.push('<td style="border:1px solid #eee"></td>');
+    for(let i=0;i<cells.length;i+=7)html+='<tr>'+cells.slice(i,i+7).join('')+'</tr>';
+    html+='</table></div>';
+  }
+  html+='</div>';
+  return html;
+}
 function dlCalCSVSummary(){
   const rows=[['เดือน','ปี พ.ศ.','วันเรียน','วันหยุด','วันชดเชย','กิจกรรม']];
   monthDayCounts(calY).forEach(r=>rows.push([TM[r.m],calY+543,r.school,r.holiday,r.makeup,r.activity]));
@@ -836,9 +849,12 @@ function dlCalPDFSummary(){
   printHTML('ปฏิทินวิชาการ - สรุป',body);
 }
 function dlCalPDFDetail(){
-  let body='<h1>ปฏิทินวิชาการ — รายละเอียดกิจกรรม</h1><h2>ปีการศึกษา '+D.settings.yr+' | ปี พ.ศ. '+(calY+543)+'</h2>';
+  let body='<h1>ปฏิทินวิชาการ — ฉบับเต็ม</h1><h2>ปีการศึกษา '+D.settings.yr+' | ปี พ.ศ. '+(calY+543)+'</h2>';
+  body+='<h3 style="color:#1a5276;font-size:14px;margin-bottom:8px">ตารางปฏิทิน</h3>';
+  body+=buildCalGridHTML(calY);
+  body+='<h3 style="color:#1a5276;font-size:14px;margin-bottom:8px">รายละเอียดกิจกรรมและวันสำคัญ</h3>';
   body+='<table><tr><th>วันที่</th><th>ชื่อกิจกรรม</th><th>ประเภท</th><th>หมายเหตุ</th></tr>';
-  const lbl={school:'วันเรียน',holiday:'วันหยุด',makeup:'ชดเชย',activity:'กิจกรรม',open:'เปิดเทอม',close:'ปิดเทอม'};
+  const lbl={school:'วันเรียน',holiday:'วันหยุด/วันสำคัญ',makeup:'ชดเชย',activity:'กิจกรรม',open:'เปิดเทอม',close:'ปิดเทอม'};
   Object.keys(D.events).filter(k=>+k.split('-')[0]===calY).sort((a,b)=>{
     const pa=a.split('-').map(Number),pb=b.split('-').map(Number);
     return new Date(pa[0],pa[1],pa[2])-new Date(pb[0],pb[1],pb[2]);
@@ -849,19 +865,15 @@ function dlCalPDFDetail(){
     });
   });
   body+='</table>';
-  printHTML('ปฏิทินวิชาการ - รายละเอียด',body);
-}
-function dlStuCSV(){
-  const rows=[['รหัส','ชื่อ','นามสกุล','โรงเรียน','ชั้น','เพศ','สถานะ']];
-  D.students.forEach(s=>rows.push([s.id,s.fn,s.ln,s.sc,s.cl,s.gd,s.st]));
-  dlCSV(rows,'รายชื่อนักเรียน.csv');toast('ดาวน์โหลดรายชื่อนักเรียน (Excel) แล้ว');
-}
-function dlStuPDF(){
-  let body='<h1>รายชื่อนักเรียน</h1><h2>'+D.settings.s1+' / '+D.settings.s2+' | ปีการศึกษา '+D.settings.yr+'</h2>';
-  body+='<table><tr><th>รหัส</th><th>ชื่อ-สกุล</th><th>โรงเรียน</th><th>ชั้น</th><th>เพศ</th><th>สถานะ</th></tr>';
-  D.students.forEach(s=>{body+='<tr><td>'+s.id+'</td><td>'+s.fn+' '+s.ln+'</td><td>'+s.sc+'</td><td>'+s.cl+'</td><td>'+s.gd+'</td><td>'+s.st+'</td></tr>';});
-  body+='</table>';
-  printHTML('รายชื่อนักเรียน',body);
+  body+='<h3 style="color:#1a5276;font-size:14px;margin-bottom:8px;margin-top:6px">สรุปวันมาเรียนรายเดือน</h3>';
+  body+='<table><tr><th>เดือน</th><th>วันเรียน</th><th>วันหยุด</th><th>วันชดเชย</th><th>กิจกรรม</th><th>รวม</th></tr>';
+  let ts=0,th=0,tm=0,ta=0;
+  monthDayCounts(calY).forEach(r=>{
+    ts+=r.school;th+=r.holiday;tm+=r.makeup;ta+=r.activity;
+    body+='<tr><td>'+TM[r.m]+'</td><td>'+r.school+'</td><td>'+r.holiday+'</td><td>'+r.makeup+'</td><td>'+r.activity+'</td><td>'+(r.school+r.holiday+r.makeup+r.activity)+'</td></tr>';
+  });
+  body+='<tr style="font-weight:700;background:#f5f5f5"><td>รวมทั้งปี</td><td>'+ts+'</td><td>'+th+'</td><td>'+tm+'</td><td>'+ta+'</td><td>'+(ts+th+tm+ta)+'</td></tr></table>';
+  printHTML('ปฏิทินวิชาการ - ฉบับเต็ม',body);
 }
 function dlSumCSV(){dlCSV([['วันที่','รายการ','ประเภท'],['13 พ.ค. 2569','วันเปิดเทอม ภาคเรียนที่ 1','เปิดเทอม'],['24 มิ.ย. 2569','วันสุนทรภู่','กิจกรรม'],['20 ก.ค. 2569','วันอาสาฬหบูชา','วันหยุด'],['21 ก.ค. 2569','วันเรียนชดเชย','ชดเชย'],['12 ส.ค. 2569','วันแม่แห่งชาติ','วันหยุด'],['30 ก.ย. 2569','วันปิดเทอม ภาคเรียนที่ 1','ปิดเทอม']],'สรุปวันเรียน.csv');toast('ดาวน์โหลด Excel แล้ว');}
 
@@ -890,32 +902,62 @@ function dlMonthSumCSV(){
 }
 
 // ═══════════════════════════════════════
-//  STUDENTS
+//  STUDENTS (announcement-style, by academic year)
 // ═══════════════════════════════════════
-let editStuId=null;
-function renderStu(list){
-  const data=list||D.students;
-  document.getElementById('stu-body').innerHTML=data.map(s=>'<tr><td style="font-family:monospace;font-size:10px;color:var(--b)">'+s.id+'</td><td style="font-weight:500">'+s.fn+' '+s.ln+'</td><td><span class="bdg '+(s.sc.includes('หนองทุ่ม')?'b':'r')+'" style="font-size:9px">'+(s.sc.includes('หนองทุ่ม')?'หนองทุ่มฯ':'โนนคูณฯ')+'</span></td><td><span class="bdg b">'+s.cl+'</span></td><td>'+(s.gd==='ชาย'?'<i class="ti ti-gender-male" style="color:var(--b)"></i>':'<i class="ti ti-gender-female" style="color:var(--r)"></i>')+' '+s.gd+'</td><td><span class="bdg '+(s.st==='กำลังศึกษา'?'g':s.st==='ลาออก'?'r':'o')+'">'+s.st+'</span></td><td style="white-space:nowrap"><button class="btn sm" onclick="editStu(\''+s.id+'\')"><i class="ti ti-edit"></i></button> <button class="btn r sm" onclick="delStu(\''+s.id+'\')"><i class="ti ti-trash"></i></button></td></tr>').join('');
+let editStuYrId=null,pendStuYrFile=null;
+function renderStuYr(){
+  const el=document.getElementById('stuyr-list');
+  const list=D.studentInfo||[];
+  if(!list.length){el.innerHTML='<div style="text-align:center;color:var(--gy);padding:28px 10px;font-size:13px"><i class="ti ti-file-info" style="font-size:24px;display:block;margin-bottom:8px"></i>ยังไม่มีข้อมูลนักเรียน<br>กด "เพิ่มข้อมูลปีการศึกษา" เพื่อแนบลิงก์หรือไฟล์ข้อมูลนักเรียน</div>';return;}
+  const sorted=[...list].sort((a,b)=>(b.yr||'').localeCompare(a.yr||''));
+  el.innerHTML=sorted.map(it=>'<div class="ai" style="align-items:flex-start"><span class="abd b">ปีการศึกษา '+it.yr+'</span><div style="flex:1"><div class="at">'+it.ttl+'</div><div class="ad">'+(it.date||'')+'</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">'+
+    (it.link?'<a href="'+it.link+'" target="_blank" class="sf"><i class="ti ti-link"></i>เปิดลิงก์</a>':'')+
+    (it.file?'<a href="'+it.file.data+'" download="'+it.file.n+'" class="sf"><i class="ti ti-paperclip"></i>'+it.file.n+'</a>':'')+
+    '</div></div><div style="display:flex;gap:4px"><button class="btn sm" onclick="editStuYr(\''+it.id+'\')"><i class="ti ti-edit"></i></button><button class="btn r sm" onclick="delStuYr(\''+it.id+'\')"><i class="ti ti-trash"></i></button></div></div>').join('');
 }
-function fstu(){
-  const q=document.getElementById('sq').value.toLowerCase(),sch=document.getElementById('ssc').value,cl=document.getElementById('scl').value;
-  renderStu(D.students.filter(s=>(!q||(s.fn+s.ln+s.id).toLowerCase().includes(q))&&(!sch||s.sc.includes(sch))&&(!cl||s.cl===cl)));
-}
-function openStuM(){editStuId=null;['sfn','sln'].forEach(id=>document.getElementById(id).value='');openOv('ov-stu');}
-function editStu(id){
-  const s=D.students.find(x=>x.id===id);if(!s)return;editStuId=id;
-  document.getElementById('sfn').value=s.fn;document.getElementById('sln').value=s.ln;
-  document.getElementById('ssc2').value=s.sc;document.getElementById('scl2').value=s.cl;
-  document.getElementById('sgd').value=s.gd;document.getElementById('sst').value=s.st;
+function openStuYrM(){
+  editStuYrId=null;pendStuYrFile=null;
+  document.getElementById('stuyr-mt').textContent='เพิ่มข้อมูลปีการศึกษา';
+  ['stuyr-yr','stuyr-ttl','stuyr-link'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('stuyr-dt').value=new Date().toISOString().slice(0,10);
+  document.getElementById('stuyr-file').value='';
+  document.getElementById('stuyr-file-prev').innerHTML='';
   openOv('ov-stu');
 }
-function delStu(id){if(!confirm('ยืนยันลบนักเรียน?'))return;D.students=D.students.filter(x=>x.id!==id);save();renderStu();toast('ลบนักเรียนแล้ว');}
-function saveStu(){
-  const fn=document.getElementById('sfn').value.trim(),ln=document.getElementById('sln').value.trim();
-  if(!fn||!ln){toast('กรุณากรอกชื่อ-นามสกุล',false);return;}
-  const obj={id:editStuId||String(Date.now()).slice(-4),fn,ln,sc:document.getElementById('ssc2').value,cl:document.getElementById('scl2').value,gd:document.getElementById('sgd').value,st:document.getElementById('sst').value};
-  if(editStuId){const i=D.students.findIndex(x=>x.id===editStuId);D.students[i]=obj;}else D.students.push(obj);
-  save();closeOv('ov-stu');renderStu();toast(editStuId?'แก้ไขนักเรียนแล้ว':'เพิ่มนักเรียนแล้ว');popSenders();
+function prevStuYrFile(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{pendStuYrFile={n:f.name,data:ev.target.result};document.getElementById('stuyr-file-prev').innerHTML='<i class="ti ti-paperclip"></i> '+f.name;};
+  r.readAsDataURL(f);
+}
+function editStuYr(id){
+  const it=(D.studentInfo||[]).find(x=>x.id===id);if(!it)return;
+  editStuYrId=id;pendStuYrFile=it.file||null;
+  document.getElementById('stuyr-mt').textContent='แก้ไขข้อมูลปีการศึกษา';
+  document.getElementById('stuyr-yr').value=it.yr;
+  document.getElementById('stuyr-ttl').value=it.ttl;
+  document.getElementById('stuyr-link').value=it.link||'';
+  document.getElementById('stuyr-dt').value=it.dateRaw||'';
+  document.getElementById('stuyr-file').value='';
+  document.getElementById('stuyr-file-prev').innerHTML=it.file?('<i class="ti ti-paperclip"></i> '+it.file.n):'';
+  openOv('ov-stu');
+}
+function delStuYr(id){
+  if(!confirm('ยืนยันลบรายการนี้?'))return;
+  D.studentInfo=(D.studentInfo||[]).filter(x=>x.id!==id);save();renderStuYr();toast('ลบแล้ว');
+}
+function saveStuYr(){
+  const yr=document.getElementById('stuyr-yr').value.trim();
+  const ttl=document.getElementById('stuyr-ttl').value.trim();
+  const link=document.getElementById('stuyr-link').value.trim();
+  const dtv=document.getElementById('stuyr-dt').value;
+  if(!yr||!ttl){toast('กรุณากรอกปีการศึกษาและหัวข้อ',false);return;}
+  if(!link&&!pendStuYrFile){toast('กรุณาใส่ลิงก์หรือแนบไฟล์อย่างน้อย 1 อย่าง',false);return;}
+  const d=dtv?new Date(dtv):new Date();
+  const obj={id:editStuYrId||('sy'+Date.now()),yr,ttl,link,file:pendStuYrFile,date:thDate(d),dateRaw:dtv};
+  if(!D.studentInfo)D.studentInfo=[];
+  if(editStuYrId){const i=D.studentInfo.findIndex(x=>x.id===editStuYrId);D.studentInfo[i]=obj;}else D.studentInfo.push(obj);
+  save();closeOv('ov-stu');renderStuYr();toast(editStuYrId?'แก้ไขแล้ว':'เพิ่มข้อมูลแล้ว');
 }
 
 // ═══════════════════════════════════════
@@ -924,10 +966,19 @@ function saveStu(){
 let editPerId=null;
 function ini(n){return n.replace(/^(นาย|นาง|นางสาว|ดร\.|รศ\.)/,'').trim().slice(0,2);}
 function renderPer(){
-  const dept=document.getElementById('dfl')?.value||'';
-  const card=p=>'<div class="pcard"><div class="av '+p.color+'">'+(p.photo?'<img src="'+p.photo+'" alt="'+p.name+'">':ini(p.name))+'</div><div class="pn">'+p.name+'</div><div class="pr">'+p.role+'</div>'+(p.type==='teacher'?'<div class="ps">'+p.dept+'</div>':'')+'<div style="display:flex;gap:4px;margin-top:8px;justify-content:center"><button class="btn sm" onclick="editPer(\''+p.id+'\')"><i class="ti ti-edit"></i></button><button class="btn r sm" onclick="delPer(\''+p.id+'\')"><i class="ti ti-trash"></i></button></div></div>';
+  const dfl=document.getElementById('dfl');
+  const dept=dfl?.value||'';
+  if(dfl){
+    const depts=[...new Set(D.personnel.filter(p=>p.type==='teacher'&&p.dept).map(p=>p.dept))].sort((a,b)=>a.localeCompare(b,'th'));
+    dfl.innerHTML='<option value="">ทุกกลุ่มสาระ</option>'+depts.map(d=>'<option'+(d===dept?' selected':'')+'>'+d+'</option>').join('');
+  }
+  const avStyle=c=>c&&c.startsWith('#')?' style="background:'+c+'"':'';
+  const avClass=c=>c&&!c.startsWith('#')?' '+c:'';
+  const card=p=>'<div class="pcard"><div class="av'+avClass(p.color)+'"'+avStyle(p.color)+'>'+(p.photo?'<img src="'+p.photo+'" alt="'+p.name+'">':ini(p.name))+'</div><div class="pn">'+p.name+'</div><div class="pr">'+p.role+'</div>'+(p.dept?'<div class="ps">'+p.dept+'</div>':'')+'<div style="display:flex;gap:4px;margin-top:8px;justify-content:center"><button class="btn sm" onclick="editPer(\''+p.id+'\')"><i class="ti ti-edit"></i></button><button class="btn r sm" onclick="delPer(\''+p.id+'\')"><i class="ti ti-trash"></i></button></div></div>';
   document.getElementById('pg-admin').innerHTML=D.personnel.filter(p=>p.type==='admin').map(card).join('');
   document.getElementById('pg-teachers').innerHTML=D.personnel.filter(p=>p.type==='teacher'&&(!dept||p.dept===dept)).map(card).join('');
+  document.getElementById('pg-staff').innerHTML=D.personnel.filter(p=>p.type==='staff').map(card).join('');
+  document.getElementById('pg-other').innerHTML=D.personnel.filter(p=>p.type==='other').map(card).join('');
   document.getElementById('per-chip').textContent=D.personnel.length+' คน';
   document.getElementById('per-n').textContent=D.personnel.length;
 }
@@ -938,11 +989,13 @@ function prevPerPhoto(e){
   r.onload=ev=>{pendPerPhoto=ev.target.result;document.getElementById('pphoto-prev').innerHTML='<img src="'+pendPerPhoto+'" style="width:60px;height:60px;border-radius:50%;object-fit:cover">';};
   r.readAsDataURL(f);
 }
-function openPerM(){editPerId=null;pendPerPhoto=null;['pname','prole'].forEach(id=>document.getElementById(id).value='');document.getElementById('pphoto-prev').innerHTML='';document.getElementById('pphoto').value='';openOv('ov-per');}
+function openPerM(){editPerId=null;pendPerPhoto=null;['pname','prole','pdept'].forEach(id=>document.getElementById(id).value='');document.getElementById('pclr').value='#1a5276';document.getElementById('ptype').value='teacher';document.getElementById('pphoto-prev').innerHTML='';document.getElementById('pphoto').value='';openOv('ov-per');}
 function editPer(id){
   const p=D.personnel.find(x=>x.id===id);if(!p)return;editPerId=id;pendPerPhoto=p.photo||null;
   document.getElementById('pname').value=p.name;document.getElementById('prole').value=p.role;
-  document.getElementById('pdept').value=p.dept;document.getElementById('ptype').value=p.type;document.getElementById('pclr').value=p.color;
+  document.getElementById('pdept').value=p.dept;document.getElementById('ptype').value=p.type;
+  const legacyClr={b:'#1a5276',g:'#1e8449',o:'#e67e22',r:'#c0392b'};
+  document.getElementById('pclr').value=(p.color&&p.color.startsWith('#'))?p.color:(legacyClr[p.color]||'#1a5276');
   document.getElementById('pphoto-prev').innerHTML=p.photo?'<img src="'+p.photo+'" style="width:60px;height:60px;border-radius:50%;object-fit:cover">':'';
   document.getElementById('pphoto').value='';
   openOv('ov-per');
@@ -963,7 +1016,6 @@ let pendF=[];
 function popSenders(){
   const sel=document.getElementById('sub-sdr');
   sel.innerHTML='<option value="">-- เลือกชื่อผู้ส่ง --</option>';
-  D.students.forEach(s=>sel.insertAdjacentHTML('beforeend','<option value="'+s.fn+' '+s.ln+'">'+s.fn+' '+s.ln+' ('+s.cl+'-'+(s.sc.includes('หนองทุ่ม')?'หนองทุ่มฯ':'โนนคูณฯ')+')</option>'));
   D.personnel.forEach(p=>sel.insertAdjacentHTML('beforeend','<option value="'+p.name+'">'+p.name+' ('+p.role+')</option>'));
 }
 function hf(e){Array.from(e.target.files).forEach(addF);}
@@ -1096,7 +1148,7 @@ function renderPort(){
 // ═══════════════════════════════════════
 document.querySelectorAll('.ov').forEach(ov=>ov.addEventListener('click',e=>{if(e.target===ov)ov.classList.remove('on');}));
 applySettings();
-initCS();renderStu();renderPer();renderHist();popSenders();
+initCS();renderStuYr();renderPer();renderHist();popSenders();
 document.getElementById('ss1').value=D.settings.s1;document.getElementById('ss2').value=D.settings.s2;
 document.getElementById('sn1').value=D.settings.n1;document.getElementById('sn2').value=D.settings.n2;
 document.getElementById('sper').value=D.settings.nper;document.getElementById('syr').value=D.settings.yr;
