@@ -242,7 +242,6 @@ body{font-family:'Sarabun',sans-serif;background:#f0f2f5;font-size:13px;color:#2
       <button class="btn g sm" onclick="dlCalPDFSummary()"><i class="ti ti-file-type-pdf"></i>PDF สรุป</button>
       <button class="btn g sm" onclick="dlCalPDFDetail()"><i class="ti ti-file-type-pdf"></i>PDF ฉบับเต็ม (ตาราง+รายละเอียด)</button>
       <button class="btn p sm" onclick="openEvM()"><i class="ti ti-plus"></i>เพิ่มกิจกรรม</button>
-      <button class="btn o sm" onclick="importThaiHolidays(calY)"><i class="ti ti-flag"></i>นำเข้าวันหยุดนักขัตฤกษ์ (ปี พ.ศ. <span id="th-imp-yr"></span>)</button>
     </div>
     <h3 id="cal-ttl" style="font-size:15px;font-weight:600;margin-bottom:10px"></h3>
     <div class="sb4" id="cal-sb">
@@ -269,7 +268,7 @@ body{font-family:'Sarabun',sans-serif;background:#f0f2f5;font-size:13px;color:#2
   <div class="sb4"><div class="sbox"><div class="n" id="sum-acc">0</div><div class="l">วันเรียนสะสม</div></div><div class="sbox"><div class="n" id="sum-target" style="color:var(--g)">0</div><div class="l">เป้าหมายรวม</div></div><div class="sbox"><div class="n" id="sum-remain" style="color:var(--o)">0</div><div class="l">คงเหลือ</div></div><div class="sbox"><div class="n" id="sum-hol" style="color:var(--r)">0</div><div class="l">วันหยุดรวม</div></div></div>
   <div class="sem"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><div id="sem1-lbl" style="font-size:13px;font-weight:600;color:var(--b)">ภาคเรียนที่ 1</div><div id="sem1-dt" style="font-size:11px;color:var(--gy);margin-top:2px"></div></div><span class="bdg b" id="sem1-bdg">-</span></div><div class="pb"><div class="pf" id="sem1-bar" style="width:0%"><span></span></div></div></div>
   <div class="sem s2"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><div id="sem2-lbl" style="font-size:13px;font-weight:600;color:var(--g)">ภาคเรียนที่ 2</div><div id="sem2-dt" style="font-size:11px;color:var(--gy);margin-top:2px"></div></div><span class="bdg o" id="sem2-bdg">-</span></div><div class="pb"><div class="pf" id="sem2-bar" style="width:0%;background:var(--g)"><span></span></div></div></div>
-  <div class="card"><div class="ch"><h3><i class="ti ti-calendar-stats" style="color:var(--b)"></i>สรุปวันเรียนรายเดือน</h3><div style="display:flex;gap:6px"><select id="sum-yr-sel" onchange="renderMonthSummary()" style="border:1px solid var(--bdr);border-radius:8px;padding:5px 8px;font-size:12px"></select><button class="btn g sm" onclick="dlMonthSumCSV()"><i class="ti ti-table"></i>Excel</button></div></div><div style="overflow-x:auto"><table class="tbl" id="month-sum-tbl"><thead><tr><th>เดือน</th><th>วันเรียน</th><th>วันหยุด</th><th>วันชดเชย</th><th>กิจกรรม</th><th>รวม</th></tr></thead><tbody id="month-sum-body"></tbody></table></div></div>
+  <div class="card"><div class="ch"><h3><i class="ti ti-calendar-stats" style="color:var(--b)"></i>สรุปวันเรียนรายเดือน</h3><div style="display:flex;gap:6px;align-items:center"><span style="font-size:11px;color:var(--gy)">ปีการศึกษา</span><button class="btn sm" onclick="sumYrStep(-1)"><i class="ti ti-chevron-left"></i></button><input type="number" id="sum-yr-sel" onchange="sumYrChange()" style="border:1px solid var(--bdr);border-radius:8px;padding:5px 6px;font-size:12px;width:72px;text-align:center"><button class="btn sm" onclick="sumYrStep(1)"><i class="ti ti-chevron-right"></i></button><button class="btn g sm" onclick="dlMonthSumCSV()"><i class="ti ti-table"></i>Excel</button></div></div><div style="overflow-x:auto"><table class="tbl" id="month-sum-tbl"><thead><tr><th>เดือน</th><th>วันเรียน</th><th>วันหยุด</th><th>วันชดเชย</th><th>กิจกรรม</th><th>รวมวันเรียน</th></tr></thead><tbody id="month-sum-body"></tbody></table></div></div>
   <div class="card"><div class="ch"><h3><i class="ti ti-list" style="color:var(--b)"></i>วันหยุดและชดเชย (เชื่อมจากปฏิทินวิชาการ)</h3><button class="btn g sm" onclick="dlSumCSV()"><i class="ti ti-table"></i>ดาวน์โหลด Excel</button></div><div style="overflow-x:auto"><table class="tbl"><thead><tr><th>วันที่</th><th>รายการ</th><th>ประเภท</th></tr></thead><tbody id="sum-ev-body"></tbody></table></div></div>
 </div>
 
@@ -435,6 +434,7 @@ let D = {
   settings:{s1:'โรงเรียนบ้านหนองทุ่มวิทยา',s2:'โรงเรียนโนนคูณอัมพวัน (เรียนรวม)',n1:42,n2:17,nper:10,yr:'2569',gcid:'',gkey:'',sem1s:'2026-05-13',sem1e:'2026-10-30',sem2s:'2026-11-02',sem2e:'2027-03-31',sem1t:100,sem2t:100},
   events:{'2026-4-13':[{name:'วันเปิดเทอม ภาคเรียนที่ 1',type:'open'}],'2026-5-3':[{name:'วันฉัตรมงคล',type:'holiday'}],'2026-6-23':[{name:'วันสุนทรภู่',type:'activity'}],'2026-7-19':[{name:'วันอาสาฬหบูชา',type:'holiday'}],'2026-7-21':[{name:'วันเรียนชดเชย',type:'makeup'}],'2026-8-12':[{name:'วันแม่แห่งชาติ',type:'holiday'}],'2026-9-30':[{name:'วันปิดเทอม ภาคเรียนที่ 1',type:'close'}]},
   studentInfo:[],
+  thHolYears:{},
   personnel:[
     {id:'p1',name:'ดร.นวลจันทร์ วงศ์ดี',role:'ผู้อำนวยการโรงเรียน',dept:'ผู้บริหาร',type:'admin',color:'b'},
     {id:'p2',name:'นายสมชาย ขยันดี',role:'รองผู้อำนวยการ',dept:'ผู้บริหาร',type:'admin',color:'g'},
@@ -744,19 +744,21 @@ const TH_HOL_LUNAR={
 };
 function importThaiHolidays(y){
   const list=[...TH_HOL_FIXED,...(TH_HOL_LUNAR[y]||[])];
-  let added=0;
   list.forEach(h=>{
     const key=ek(y,h.m,h.d);
     if(!D.events[key])D.events[key]=[];
-    if(!D.events[key].some(e=>e.name===h.name))
-    {D.events[key].push({name:h.name,type:'holiday',thHol:true});added++;}
+    if(!D.events[key].some(e=>e.name===h.name))D.events[key].push({name:h.name,type:'holiday',thHol:true});
   });
-  save();renderCal();renderSumPage();
-  if(!TH_HOL_LUNAR[y])toast('นำเข้าวันหยุดที่วันที่ตายตัวแล้ว '+added+' รายการ (วันหยุดตามจันทรคติ เช่น มาฆบูชา ต้องเพิ่มเองสำหรับปีนี้)');
-  else toast('นำเข้าวันหยุดนักขัตฤกษ์ ปี พ.ศ. '+(y+543)+' แล้ว '+added+' รายการ');
+}
+function ensureThaiHolidays(y){
+  if(!D.thHolYears)D.thHolYears={};
+  if(D.thHolYears[y])return;
+  importThaiHolidays(y);
+  D.thHolYears[y]=true;
+  save();
 }
 
-function renderCal(){document.getElementById('ev-pnl').style.display='none';const ty=document.getElementById('th-imp-yr');if(ty)ty.textContent=calY+543;calV==='month'?renderMCal():renderYCal();}
+function renderCal(){ensureThaiHolidays(calY);document.getElementById('ev-pnl').style.display='none';calV==='month'?renderMCal():renderYCal();}
 function renderMCal(){
   const b=document.getElementById('cal-body'),td=new Date();
   document.getElementById('cal-ttl').textContent=TM[calM]+' '+(calY+543);
@@ -770,7 +772,7 @@ function renderMCal(){
     let ev='';
     if(D.events[key])D.events[key].forEach(e=>{
       const c=e.type==='holiday'?'eh':e.type==='makeup'?'em':e.type==='activity'?'ea':(e.type==='open'||e.type==='close')?'eo':'es';
-      if(e.type==='school')s++;else if(e.type==='holiday')h++;else if(e.type==='makeup')mk++;else if(e.type==='activity')ac++;
+      if(e.type==='school')s++;else if(e.type==='holiday')h++;else if(e.type==='makeup')mk++;else if(e.type==='activity'){ac++;s++;}
       ev+='<span class="evd '+c+'">'+e.name+'</span>';
     });
     else if(!isW)s++;
@@ -857,23 +859,53 @@ function saveEv(){
   editEvKey=null;editEvIdx=null;
   save();closeOv('ov-ev');renderCal();renderSumPage();toast(wasEdit?'แก้ไขกิจกรรมแล้ว':'เพิ่มกิจกรรมแล้ว');
 }
+function monthStat(y,m){
+  // note: 'activity' days are also counted as school days (students attend on activity days)
+  const days=new Date(y,m+1,0).getDate();
+  let s=0,h=0,mk=0,ac=0;
+  for(let d=1;d<=days;d++){
+    const key=ek(y,m,d),dt=new Date(y,m,d),isW=dt.getDay()===0||dt.getDay()===6;
+    if(D.events[key]&&D.events[key].length){
+      D.events[key].forEach(e=>{
+        if(e.type==='school')s++;else if(e.type==='holiday')h++;else if(e.type==='makeup')mk++;else if(e.type==='activity'){ac++;s++;}
+      });
+    } else if(!isW) s++;
+  }
+  return{school:s,holiday:h,makeup:mk,activity:ac};
+}
 function monthDayCounts(y){
-  // returns {monthIdx: {school,holiday,makeup,activity,total}} for given B.E. year (y = CE year)
+  // returns rows Jan–Dec for a given CE calendar year (used by the calendar page's own exports)
   const res=[];
   for(let m=0;m<12;m++){
-    const days=new Date(y,m+1,0).getDate();
-    let s=0,h=0,mk=0,ac=0;
-    for(let d=1;d<=days;d++){
-      const key=ek(y,m,d),dt=new Date(y,m,d),isW=dt.getDay()===0||dt.getDay()===6;
-      if(D.events[key]&&D.events[key].length){
-        D.events[key].forEach(e=>{
-          if(e.type==='school')s++;else if(e.type==='holiday')h++;else if(e.type==='makeup')mk++;else if(e.type==='activity')ac++;
-        });
-      } else if(!isW) s++;
-    }
-    res.push({m,school:s,holiday:h,makeup:mk,activity:ac});
+    const st=monthStat(y,m);
+    res.push({m,y,school:st.school,holiday:st.holiday,makeup:st.makeup,activity:st.activity});
   }
   return res;
+}
+function academicMonths(beYear){
+  // builds the ordered list of {y,m} months belonging to ปีการศึกษา beYear,
+  // based on the semester start/end months configured in settings (falls back to May–March)
+  const s=D.settings;
+  const monthOf=(str,fallback)=>str?(+str.split('-')[1]-1):fallback;
+  const startM=monthOf(s.sem1s,4),endM=monthOf(s.sem2e,2);
+  const ceStart=beYear-543;
+  const months=[];
+  if(endM>=startM){
+    for(let m=startM;m<=endM;m++)months.push({y:ceStart,m});
+  } else {
+    for(let m=startM;m<=11;m++)months.push({y:ceStart,m});
+    for(let m=0;m<=endM;m++)months.push({y:ceStart+1,m});
+  }
+  return months;
+}
+function academicMonthDayCounts(beYear){
+  const months=academicMonths(beYear);
+  const years=[...new Set(months.map(x=>x.y))];
+  years.forEach(y=>ensureThaiHolidays(y));
+  return months.map(({y,m})=>{
+    const st=monthStat(y,m);
+    return{y,m,school:st.school,holiday:st.holiday,makeup:st.makeup,activity:st.activity};
+  });
 }
 function buildCalGridHTML(y){
   let html='<div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px">';
@@ -933,13 +965,13 @@ function printHTML(title,bodyHtml){
 }
 function dlCalPDFSummary(){
   let body='<h1>ปฏิทินวิชาการ — สรุปรายเดือน</h1><h2>ปีการศึกษา '+D.settings.yr+' | ปี พ.ศ. '+(calY+543)+'</h2>';
-  body+='<table><tr><th>เดือน</th><th>วันเรียน</th><th>วันหยุด</th><th>วันชดเชย</th><th>กิจกรรม</th><th>รวม</th></tr>';
+  body+='<table><tr><th>เดือน</th><th>วันเรียน</th><th>วันหยุด</th><th>วันชดเชย</th><th>กิจกรรม</th><th>รวมวันเรียน</th></tr>';
   let ts=0,th=0,tm=0,ta=0;
   monthDayCounts(calY).forEach(r=>{
     ts+=r.school;th+=r.holiday;tm+=r.makeup;ta+=r.activity;
-    body+='<tr><td>'+TM[r.m]+'</td><td>'+r.school+'</td><td>'+r.holiday+'</td><td>'+r.makeup+'</td><td>'+r.activity+'</td><td>'+(r.school+r.holiday+r.makeup+r.activity)+'</td></tr>';
+    body+='<tr><td>'+TM[r.m]+'</td><td>'+r.school+'</td><td>'+r.holiday+'</td><td>'+r.makeup+'</td><td>'+r.activity+'</td><td>'+r.school+'</td></tr>';
   });
-  body+='<tr style="font-weight:700;background:#f5f5f5"><td>รวมทั้งปี</td><td>'+ts+'</td><td>'+th+'</td><td>'+tm+'</td><td>'+ta+'</td><td>'+(ts+th+tm+ta)+'</td></tr></table>';
+  body+='<tr style="font-weight:700;background:#f5f5f5"><td>รวมทั้งปี</td><td>'+ts+'</td><td>'+th+'</td><td>'+tm+'</td><td>'+ta+'</td><td>'+ts+'</td></tr></table>';
   printHTML('ปฏิทินวิชาการ - สรุป',body);
 }
 function dlCalPDFDetail(){
@@ -960,16 +992,17 @@ function dlCalPDFDetail(){
   });
   body+='</table>';
   body+='<h3 style="color:#1a5276;font-size:14px;margin-bottom:8px;margin-top:6px">สรุปวันมาเรียนรายเดือน</h3>';
-  body+='<table><tr><th>เดือน</th><th>วันเรียน</th><th>วันหยุด</th><th>วันชดเชย</th><th>กิจกรรม</th><th>รวม</th></tr>';
+  body+='<table><tr><th>เดือน</th><th>วันเรียน</th><th>วันหยุด</th><th>วันชดเชย</th><th>กิจกรรม</th><th>รวมวันเรียน</th></tr>';
   let ts=0,th=0,tm=0,ta=0;
   monthDayCounts(calY).forEach(r=>{
     ts+=r.school;th+=r.holiday;tm+=r.makeup;ta+=r.activity;
-    body+='<tr><td>'+TM[r.m]+'</td><td>'+r.school+'</td><td>'+r.holiday+'</td><td>'+r.makeup+'</td><td>'+r.activity+'</td><td>'+(r.school+r.holiday+r.makeup+r.activity)+'</td></tr>';
+    body+='<tr><td>'+TM[r.m]+'</td><td>'+r.school+'</td><td>'+r.holiday+'</td><td>'+r.makeup+'</td><td>'+r.activity+'</td><td>'+r.school+'</td></tr>';
   });
-  body+='<tr style="font-weight:700;background:#f5f5f5"><td>รวมทั้งปี</td><td>'+ts+'</td><td>'+th+'</td><td>'+tm+'</td><td>'+ta+'</td><td>'+(ts+th+tm+ta)+'</td></tr></table>';
+  body+='<tr style="font-weight:700;background:#f5f5f5"><td>รวมทั้งปี</td><td>'+ts+'</td><td>'+th+'</td><td>'+tm+'</td><td>'+ta+'</td><td>'+ts+'</td></tr></table>';
   printHTML('ปฏิทินวิชาการ - ฉบับเต็ม',body);
 }
 function rangeDayCounts(startStr,endStr){
+  // note: 'activity' days are also counted as school days (students attend on activity days)
   if(!startStr||!endStr)return{school:0,holiday:0,makeup:0,activity:0};
   const sd=new Date(startStr+'T00:00:00'),ed=new Date(endStr+'T00:00:00');
   let s=0,h=0,mk=0,ac=0;
@@ -977,7 +1010,7 @@ function rangeDayCounts(startStr,endStr){
     const key=ek(dt.getFullYear(),dt.getMonth(),dt.getDate()),isW=dt.getDay()===0||dt.getDay()===6;
     if(D.events[key]&&D.events[key].length){
       D.events[key].forEach(e=>{
-        if(e.type==='school')s++;else if(e.type==='holiday')h++;else if(e.type==='makeup')mk++;else if(e.type==='activity')ac++;
+        if(e.type==='school')s++;else if(e.type==='holiday')h++;else if(e.type==='makeup')mk++;else if(e.type==='activity'){ac++;s++;}
       });
     } else if(!isW)s++;
   }
@@ -1006,6 +1039,7 @@ function renderYearEventList(){
 }
 function renderSumPage(){
   const s=D.settings,today=new Date();today.setHours(0,0,0,0);
+  [s.sem1s,s.sem1e,s.sem2s,s.sem2e].forEach(dstr=>{if(dstr)ensureThaiHolidays(+dstr.split('-')[0]);});
   const sem1=rangeDayCounts(s.sem1s,s.sem1e),sem2=rangeDayCounts(s.sem2s,s.sem2e);
   const t1=parseInt(s.sem1t)||100,t2=parseInt(s.sem2t)||100;
   const setTxt=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
@@ -1043,28 +1077,28 @@ function dlSumCSV(){
   dlCSV(rows,'สรุปวันเรียน_ปีการศึกษา'+(D.settings.yr||'')+'.csv');toast('ดาวน์โหลด Excel แล้ว');
 }
 
-let sumSelY=new Date().getFullYear();
+let sumSelBE=parseInt(D.settings.yr)||(new Date().getFullYear()+543);
+function sumYrStep(delta){sumSelBE+=delta;document.getElementById('sum-yr-sel').value=sumSelBE;renderMonthSummary();}
+function sumYrChange(){
+  const v=parseInt(document.getElementById('sum-yr-sel').value);
+  if(!isNaN(v)&&v>=2400)sumSelBE=v;
+  renderMonthSummary();
+}
 function renderMonthSummary(){
-  const sel=document.getElementById('sum-yr-sel');
-  if(!sel.dataset.init){
-    const cur=new Date().getFullYear();
-    for(let y=cur-3;y<=cur+3;y++){const o=document.createElement('option');o.value=y;o.textContent=y+543;if(y===sumSelY)o.selected=true;sel.appendChild(o);}
-    sel.dataset.init='1';
-  }
-  sumSelY=+sel.value||sumSelY;
+  document.getElementById('sum-yr-sel').value=sumSelBE;
   const body=document.getElementById('month-sum-body');
   let html='',ts=0,th=0,tm=0,ta=0;
-  monthDayCounts(sumSelY).forEach(r=>{
+  academicMonthDayCounts(sumSelBE).forEach(r=>{
     ts+=r.school;th+=r.holiday;tm+=r.makeup;ta+=r.activity;
-    html+='<tr><td>'+TM[r.m]+'</td><td>'+r.school+'</td><td><span style="color:var(--r)">'+r.holiday+'</span></td><td><span style="color:var(--o)">'+r.makeup+'</span></td><td><span style="color:var(--g)">'+r.activity+'</span></td><td style="font-weight:600">'+(r.school+r.holiday+r.makeup+r.activity)+'</td></tr>';
+    html+='<tr><td>'+TM[r.m]+' '+(r.y+543)+'</td><td>'+r.school+'</td><td><span style="color:var(--r)">'+r.holiday+'</span></td><td><span style="color:var(--o)">'+r.makeup+'</span></td><td><span style="color:var(--g)">'+r.activity+'</span></td><td style="font-weight:600">'+r.school+'</td></tr>';
   });
-  html+='<tr style="font-weight:700;background:var(--b4)"><td>รวมทั้งปี</td><td>'+ts+'</td><td>'+th+'</td><td>'+tm+'</td><td>'+ta+'</td><td>'+(ts+th+tm+ta)+'</td></tr>';
+  html+='<tr style="font-weight:700;background:var(--b4)"><td>รวมทั้งปีการศึกษา</td><td>'+ts+'</td><td>'+th+'</td><td>'+tm+'</td><td>'+ta+'</td><td>'+ts+'</td></tr>';
   body.innerHTML=html;
 }
 function dlMonthSumCSV(){
-  const rows=[['เดือน','วันเรียน','วันหยุด','วันชดเชย','กิจกรรม','รวม']];
-  monthDayCounts(sumSelY).forEach(r=>rows.push([TM[r.m],r.school,r.holiday,r.makeup,r.activity,r.school+r.holiday+r.makeup+r.activity]));
-  dlCSV(rows,'สรุปวันเรียนรายเดือน_'+(sumSelY+543)+'.csv');toast('ดาวน์โหลด Excel แล้ว');
+  const rows=[['เดือน','วันเรียน','วันหยุด','วันชดเชย','กิจกรรม','รวมวันเรียน']];
+  academicMonthDayCounts(sumSelBE).forEach(r=>rows.push([TM[r.m]+' '+(r.y+543),r.school,r.holiday,r.makeup,r.activity,r.school]));
+  dlCSV(rows,'สรุปวันเรียนรายเดือน_ปีการศึกษา'+sumSelBE+'.csv');toast('ดาวน์โหลด Excel แล้ว');
 }
 
 // ═══════════════════════════════════════
