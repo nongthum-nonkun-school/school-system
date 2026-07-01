@@ -242,6 +242,7 @@ body{font-family:'Sarabun',sans-serif;background:#f0f2f5;font-size:13px;color:#2
       <button class="btn g sm" onclick="dlCalPDFSummary()"><i class="ti ti-file-type-pdf"></i>PDF สรุป</button>
       <button class="btn g sm" onclick="dlCalPDFDetail()"><i class="ti ti-file-type-pdf"></i>PDF ฉบับเต็ม (ตาราง+รายละเอียด)</button>
       <button class="btn p sm" onclick="openEvM()"><i class="ti ti-plus"></i>เพิ่มกิจกรรม</button>
+      <button class="btn o sm" onclick="importThaiHolidays(calY)"><i class="ti ti-flag"></i>นำเข้าวันหยุดนักขัตฤกษ์ (ปี พ.ศ. <span id="th-imp-yr"></span>)</button>
     </div>
     <h3 id="cal-ttl" style="font-size:15px;font-weight:600;margin-bottom:10px"></h3>
     <div class="sb4" id="cal-sb">
@@ -264,12 +265,12 @@ body{font-family:'Sarabun',sans-serif;background:#f0f2f5;font-size:13px;color:#2
 
 <!-- SUMMARY -->
 <div class="pg" id="pg-sum">
-  <div style="font-size:14px;font-weight:600;color:var(--b);margin-bottom:12px;display:flex;align-items:center;gap:7px"><i class="ti ti-clipboard-check"></i>สรุปวันเรียน ปีการศึกษา <span id="sum-yr">2569</span></div>
-  <div class="sb4"><div class="sbox"><div class="n">68</div><div class="l">วันเรียนสะสม</div></div><div class="sbox"><div class="n" style="color:var(--g)">200</div><div class="l">เป้าหมายรวม</div></div><div class="sbox"><div class="n" style="color:var(--o)">132</div><div class="l">คงเหลือ</div></div><div class="sbox"><div class="n" style="color:var(--r)">22</div><div class="l">วันหยุดรวม</div></div></div>
-  <div class="sem"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><div style="font-size:13px;font-weight:600;color:var(--b)">ภาคเรียนที่ 1 (พ.ค. – ก.ย. 2569)</div><div style="font-size:11px;color:var(--gy);margin-top:2px">เปิด 13 พ.ค. 2569 | ปิด 30 ก.ย. 2569</div></div><span class="bdg b">กำลังดำเนินการ</span></div><div class="pb"><div class="pf" style="width:68%"><span>68/100 วัน</span></div></div></div>
-  <div class="sem s2"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><div style="font-size:13px;font-weight:600;color:var(--g)">ภาคเรียนที่ 2 (ต.ค. 2569 – ก.พ. 2570)</div><div style="font-size:11px;color:var(--gy);margin-top:2px">เปิด 1 ต.ค. 2569 | ปิด 28 ก.พ. 2570</div></div><span class="bdg o">ยังไม่เริ่ม</span></div><div class="pb"><div class="pf" style="width:0%;background:var(--g)"></div></div></div>
+  <div style="font-size:14px;font-weight:600;color:var(--b);margin-bottom:12px;display:flex;align-items:center;gap:7px;justify-content:space-between"><span><i class="ti ti-clipboard-check"></i> สรุปวันเรียน ปีการศึกษา <span id="sum-yr">2569</span></span><button class="btn p sm" onclick="openSetModal()"><i class="ti ti-settings"></i>ตั้งค่าภาคเรียน</button></div>
+  <div class="sb4"><div class="sbox"><div class="n" id="sum-acc">0</div><div class="l">วันเรียนสะสม</div></div><div class="sbox"><div class="n" id="sum-target" style="color:var(--g)">0</div><div class="l">เป้าหมายรวม</div></div><div class="sbox"><div class="n" id="sum-remain" style="color:var(--o)">0</div><div class="l">คงเหลือ</div></div><div class="sbox"><div class="n" id="sum-hol" style="color:var(--r)">0</div><div class="l">วันหยุดรวม</div></div></div>
+  <div class="sem"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><div id="sem1-lbl" style="font-size:13px;font-weight:600;color:var(--b)">ภาคเรียนที่ 1</div><div id="sem1-dt" style="font-size:11px;color:var(--gy);margin-top:2px"></div></div><span class="bdg b" id="sem1-bdg">-</span></div><div class="pb"><div class="pf" id="sem1-bar" style="width:0%"><span></span></div></div></div>
+  <div class="sem s2"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><div id="sem2-lbl" style="font-size:13px;font-weight:600;color:var(--g)">ภาคเรียนที่ 2</div><div id="sem2-dt" style="font-size:11px;color:var(--gy);margin-top:2px"></div></div><span class="bdg o" id="sem2-bdg">-</span></div><div class="pb"><div class="pf" id="sem2-bar" style="width:0%;background:var(--g)"><span></span></div></div></div>
   <div class="card"><div class="ch"><h3><i class="ti ti-calendar-stats" style="color:var(--b)"></i>สรุปวันเรียนรายเดือน</h3><div style="display:flex;gap:6px"><select id="sum-yr-sel" onchange="renderMonthSummary()" style="border:1px solid var(--bdr);border-radius:8px;padding:5px 8px;font-size:12px"></select><button class="btn g sm" onclick="dlMonthSumCSV()"><i class="ti ti-table"></i>Excel</button></div></div><div style="overflow-x:auto"><table class="tbl" id="month-sum-tbl"><thead><tr><th>เดือน</th><th>วันเรียน</th><th>วันหยุด</th><th>วันชดเชย</th><th>กิจกรรม</th><th>รวม</th></tr></thead><tbody id="month-sum-body"></tbody></table></div></div>
-  <div class="card"><div class="ch"><h3><i class="ti ti-list" style="color:var(--b)"></i>วันหยุดและชดเชย</h3><button class="btn g sm" onclick="dlSumCSV()"><i class="ti ti-table"></i>ดาวน์โหลด Excel</button></div><div style="overflow-x:auto"><table class="tbl"><thead><tr><th>วันที่</th><th>รายการ</th><th>ประเภท</th></tr></thead><tbody><tr><td>13 พ.ค. 2569</td><td>วันเปิดเทอม ภาคเรียนที่ 1</td><td><span class="bdg b">เปิดเทอม</span></td></tr><tr><td>24 มิ.ย. 2569</td><td>วันสุนทรภู่</td><td><span class="bdg g">กิจกรรม</span></td></tr><tr><td>20 ก.ค. 2569</td><td>วันอาสาฬหบูชา</td><td><span class="bdg r">วันหยุด</span></td></tr><tr><td>21 ก.ค. 2569</td><td>วันเรียนชดเชย วันอาสาฬหบูชา</td><td><span class="bdg o">ชดเชย</span></td></tr><tr><td>12 ส.ค. 2569</td><td>วันแม่แห่งชาติ</td><td><span class="bdg r">วันหยุด</span></td></tr><tr><td>30 ก.ย. 2569</td><td>วันปิดเทอม ภาคเรียนที่ 1</td><td><span class="bdg b">ปิดเทอม</span></td></tr></tbody></table></div></div>
+  <div class="card"><div class="ch"><h3><i class="ti ti-list" style="color:var(--b)"></i>วันหยุดและชดเชย (เชื่อมจากปฏิทินวิชาการ)</h3><button class="btn g sm" onclick="dlSumCSV()"><i class="ti ti-table"></i>ดาวน์โหลด Excel</button></div><div style="overflow-x:auto"><table class="tbl"><thead><tr><th>วันที่</th><th>รายการ</th><th>ประเภท</th></tr></thead><tbody id="sum-ev-body"></tbody></table></div></div>
 </div>
 
 <!-- PERSONNEL -->
@@ -361,6 +362,14 @@ body{font-family:'Sarabun',sans-serif;background:#f0f2f5;font-size:13px;color:#2
     <div class="fg"><label>จำนวนบุคลากร</label><input type="number" id="sper" value="10"></div>
     <div class="fg"><label>ปีการศึกษา</label><input type="text" id="syr" value="2569"></div>
   </div>
+  <!-- Semester Settings -->
+  <div style="background:var(--g3);border-radius:8px;padding:12px;margin-bottom:10px">
+    <div style="font-size:12px;font-weight:600;color:var(--g);margin-bottom:8px"><i class="ti ti-calendar-time"></i> ตั้งค่าภาคเรียน (เชื่อมกับหน้าสรุปวันเรียนและปฏิทินวิชาการ)</div>
+    <div class="fr"><div class="fg"><label>เปิดเทอม 1</label><input type="date" id="sem1s"></div><div class="fg"><label>ปิดเทอม 1</label><input type="date" id="sem1e"></div></div>
+    <div class="fr"><div class="fg"><label>เปิดเทอม 2</label><input type="date" id="sem2s"></div><div class="fg"><label>ปิดเทอม 2</label><input type="date" id="sem2e"></div></div>
+    <div class="fr"><div class="fg"><label>เป้าหมายวันเรียน เทอม 1</label><input type="number" id="sem1t" value="100"></div><div class="fg"><label>เป้าหมายวันเรียน เทอม 2</label><input type="number" id="sem2t" value="100"></div></div>
+    <div style="font-size:10px;color:var(--gy);margin-top:2px">กด "บันทึก" แล้วระบบจะปรับวันเปิด/ปิดเทอมในปฏิทินวิชาการให้ตรงกันอัตโนมัติ</div>
+  </div>
   <!-- Drive API Settings -->
   <div style="background:var(--b4);border-radius:8px;padding:12px;margin-bottom:10px">
     <div style="font-size:12px;font-weight:600;color:var(--b);margin-bottom:8px"><i class="ti ti-brand-google-drive"></i> ตั้งค่า Google Drive API</div>
@@ -423,7 +432,7 @@ const TM=['มกราคม','กุมภาพันธ์','มีนาค
 const DS=['อา','จ','อ','พ','พฤ','ศ','ส'];
 
 let D = {
-  settings:{s1:'โรงเรียนบ้านหนองทุ่มวิทยา',s2:'โรงเรียนโนนคูณอัมพวัน (เรียนรวม)',n1:42,n2:17,nper:10,yr:'2569',gcid:'',gkey:''},
+  settings:{s1:'โรงเรียนบ้านหนองทุ่มวิทยา',s2:'โรงเรียนโนนคูณอัมพวัน (เรียนรวม)',n1:42,n2:17,nper:10,yr:'2569',gcid:'',gkey:'',sem1s:'2026-05-13',sem1e:'2026-10-30',sem2s:'2026-11-02',sem2e:'2027-03-31',sem1t:100,sem2t:100},
   events:{'2026-4-13':[{name:'วันเปิดเทอม ภาคเรียนที่ 1',type:'open'}],'2026-5-3':[{name:'วันฉัตรมงคล',type:'holiday'}],'2026-6-23':[{name:'วันสุนทรภู่',type:'activity'}],'2026-7-19':[{name:'วันอาสาฬหบูชา',type:'holiday'}],'2026-7-21':[{name:'วันเรียนชดเชย',type:'makeup'}],'2026-8-12':[{name:'วันแม่แห่งชาติ',type:'holiday'}],'2026-9-30':[{name:'วันปิดเทอม ภาคเรียนที่ 1',type:'close'}]},
   studentInfo:[],
   personnel:[
@@ -497,7 +506,7 @@ function go(p,el){
   if(p==='stu')renderStuYr();
   if(p==='per')renderPer();
   if(p==='sub'){renderHist();popSenders();}
-  if(p==='sum')renderMonthSummary();
+  if(p==='sum'){renderSumPage();renderMonthSummary();}
   if(p==='port')renderPort();
 }
 
@@ -521,10 +530,36 @@ function saveSet(){
     nper:parseInt(document.getElementById('sper').value)||0,
     yr:document.getElementById('syr').value.trim(),
     gcid:document.getElementById('gcid').value.trim(),
-    gkey:document.getElementById('gkey').value.trim()
+    gkey:document.getElementById('gkey').value.trim(),
+    sem1s:document.getElementById('sem1s').value,
+    sem1e:document.getElementById('sem1e').value,
+    sem2s:document.getElementById('sem2s').value,
+    sem2e:document.getElementById('sem2e').value,
+    sem1t:parseInt(document.getElementById('sem1t').value)||100,
+    sem2t:parseInt(document.getElementById('sem2t').value)||100
   };
+  syncSemesterEvents();
   applySettings();save();closeOv('ov-set');toast('บันทึกการตั้งค่าแล้ว');
   if(D.settings.gcid)initGapi();
+}
+function syncSemesterEvents(){
+  // remove previously auto-generated open/close markers so dates never duplicate when changed
+  Object.keys(D.events).forEach(k=>{
+    D.events[k]=D.events[k].filter(e=>!e.auto);
+    if(!D.events[k].length)delete D.events[k];
+  });
+  const addAuto=(dateStr,name,type)=>{
+    if(!dateStr)return;
+    const p=dateStr.split('-').map(Number);
+    const key=ek(p[0],p[1]-1,p[2]);
+    if(!D.events[key])D.events[key]=[];
+    D.events[key].push({name,type,auto:true});
+  };
+  const s=D.settings;
+  addAuto(s.sem1s,'วันเปิดเทอม ภาคเรียนที่ 1','open');
+  addAuto(s.sem1e,'วันปิดเทอม ภาคเรียนที่ 1','close');
+  addAuto(s.sem2s,'วันเปิดเทอม ภาคเรียนที่ 2','open');
+  addAuto(s.sem2e,'วันปิดเทอม ภาคเรียนที่ 2','close');
 }
 function applySettings(){
   const s=D.settings;
@@ -544,6 +579,9 @@ function openSetModal(){
   document.getElementById('sn1').value=s.n1;document.getElementById('sn2').value=s.n2;
   document.getElementById('sper').value=s.nper;document.getElementById('syr').value=s.yr;
   document.getElementById('gcid').value=s.gcid||'';document.getElementById('gkey').value=s.gkey||'';
+  document.getElementById('sem1s').value=s.sem1s||'';document.getElementById('sem1e').value=s.sem1e||'';
+  document.getElementById('sem2s').value=s.sem2s||'';document.getElementById('sem2e').value=s.sem2e||'';
+  document.getElementById('sem1t').value=s.sem1t||100;document.getElementById('sem2t').value=s.sem2t||100;
   openOv('ov-set');
 }
 
@@ -681,7 +719,44 @@ function setV(v){
 function cprev(){if(calV==='month'){calM--;if(calM<0){calM=11;calY--;}}else calY--;initCS();renderCal();}
 function cnext(){if(calV==='month'){calM++;if(calM>11){calM=0;calY++;}}else calY++;initCS();renderCal();}
 function ctd(){const t=new Date();calY=t.getFullYear();calM=t.getMonth();initCS();renderCal();}
-function renderCal(){document.getElementById('ev-pnl').style.display='none';calV==='month'?renderMCal():renderYCal();}
+// ── Thai public holidays: fixed-date holidays apply every year;
+//    lunar/Buddhist holidays are hardcoded for known years (extend as official dates are announced)
+const TH_HOL_FIXED=[
+  {m:0,d:1,name:'วันขึ้นปีใหม่'},
+  {m:3,d:6,name:'วันจักรี'},
+  {m:3,d:13,name:'วันสงกรานต์'},
+  {m:3,d:14,name:'วันสงกรานต์'},
+  {m:3,d:15,name:'วันสงกรานต์'},
+  {m:4,d:1,name:'วันแรงงานแห่งชาติ'},
+  {m:4,d:4,name:'วันฉัตรมงคล'},
+  {m:6,d:28,name:'วันเฉลิมพระชนมพรรษา ร.10'},
+  {m:7,d:12,name:'วันแม่แห่งชาติ'},
+  {m:9,d:13,name:'วันนวมินทรมหาราช'},
+  {m:9,d:23,name:'วันปิยมหาราช'},
+  {m:11,d:5,name:'วันพ่อแห่งชาติ'},
+  {m:11,d:10,name:'วันรัฐธรรมนูญ'},
+  {m:11,d:31,name:'วันสิ้นปี'}
+];
+// Lunar/Buddhist + other movable holidays confirmed by official CE year
+const TH_HOL_LUNAR={
+  2026:[{m:1,d:3,name:'วันมาฆบูชา'},{m:4,d:13,name:'วันพืชมงคล'},{m:4,d:31,name:'วันวิสาขบูชา'},{m:5,d:1,name:'ชดเชยวันวิสาขบูชา'},{m:5,d:3,name:'วันเฉลิมพระชนมพรรษา พระราชินี'},{m:6,d:29,name:'วันอาสาฬหบูชา'},{m:6,d:30,name:'วันเข้าพรรษา'},{m:11,d:7,name:'ชดเชยวันพ่อแห่งชาติ'}],
+  2027:[{m:1,d:21,name:'วันมาฆบูชา'},{m:1,d:22,name:'ชดเชยวันมาฆบูชา'},{m:4,d:3,name:'วันหยุดชดเชยวันแรงงาน'},{m:4,d:20,name:'วันวิสาขบูชา'},{m:5,d:3,name:'วันเฉลิมพระชนมพรรษา พระราชินี'},{m:6,d:18,name:'วันอาสาฬหบูชา'},{m:6,d:19,name:'วันเข้าพรรษา'}]
+};
+function importThaiHolidays(y){
+  const list=[...TH_HOL_FIXED,...(TH_HOL_LUNAR[y]||[])];
+  let added=0;
+  list.forEach(h=>{
+    const key=ek(y,h.m,h.d);
+    if(!D.events[key])D.events[key]=[];
+    if(!D.events[key].some(e=>e.name===h.name))
+    {D.events[key].push({name:h.name,type:'holiday',thHol:true});added++;}
+  });
+  save();renderCal();renderSumPage();
+  if(!TH_HOL_LUNAR[y])toast('นำเข้าวันหยุดที่วันที่ตายตัวแล้ว '+added+' รายการ (วันหยุดตามจันทรคติ เช่น มาฆบูชา ต้องเพิ่มเองสำหรับปีนี้)');
+  else toast('นำเข้าวันหยุดนักขัตฤกษ์ ปี พ.ศ. '+(y+543)+' แล้ว '+added+' รายการ');
+}
+
+function renderCal(){document.getElementById('ev-pnl').style.display='none';const ty=document.getElementById('th-imp-yr');if(ty)ty.textContent=calY+543;calV==='month'?renderMCal():renderYCal();}
 function renderMCal(){
   const b=document.getElementById('cal-body'),td=new Date();
   document.getElementById('cal-ttl').textContent=TM[calM]+' '+(calY+543);
@@ -736,32 +811,51 @@ function selD(y,m,d){
   if(D.events[key]&&D.events[key].length){
     D.events[key].forEach((ev,i)=>{
       const lbl={school:'วันเรียน',holiday:'วันหยุด',makeup:'ชดเชย',activity:'กิจกรรม',open:'เปิดเทอม',close:'ปิดเทอม'}[ev.type]||ev.type;
-      html+='<div class="er"><div><span class="chip">'+lbl+'</span> <span style="font-size:12px">'+ev.name+'</span>'+(ev.note?'<div style="font-size:10px;color:var(--gy);margin-top:2px">'+ev.note+'</div>':'')+'</div><button class="btn r sm" onclick="delEv(\''+key+'\','+i+')"><i class="ti ti-trash"></i></button></div>';
+      html+='<div class="er"><div><span class="chip">'+lbl+'</span> <span style="font-size:12px">'+ev.name+'</span>'+(ev.note?'<div style="font-size:10px;color:var(--gy);margin-top:2px">'+ev.note+'</div>':'')+'</div><div style="display:flex;gap:4px"><button class="btn sm" onclick="editEv(\''+key+'\','+i+')"><i class="ti ti-edit"></i></button><button class="btn r sm" onclick="delEv(\''+key+'\','+i+')"><i class="ti ti-trash"></i></button></div></div>';
     });
+    html+='<div style="text-align:center;margin-top:6px"><button class="btn p sm" onclick="openEvMD(\''+key+'\')"><i class="ti ti-plus"></i>เพิ่มกิจกรรมอื่นในวันนี้</button></div>';
   } else html+='<div style="font-size:12px;color:var(--gy);text-align:center;padding:8px">ไม่มีกิจกรรม <button class="btn p sm" style="margin-left:6px" onclick="openEvMD(\''+key+'\')"><i class="ti ti-plus"></i>เพิ่ม</button></div>';
   html+='</div>';pnl.innerHTML=html;pnl.style.display='block';
 }
 function delEv(key,idx){
   if(!confirm('ลบกิจกรรมนี้?'))return;
   D.events[key].splice(idx,1);if(!D.events[key].length)delete D.events[key];
-  save();renderCal();toast('ลบกิจกรรมแล้ว');
+  save();renderCal();renderSumPage();toast('ลบกิจกรรมแล้ว');
 }
-function openEvM(){['evn','evnt','evs','eve'].forEach(id=>document.getElementById(id).value='');openOv('ov-ev');}
+let editEvKey=null,editEvIdx=null;
+function openEvM(){editEvKey=null;editEvIdx=null;['evn','evnt','evs','eve'].forEach(id=>document.getElementById(id).value='');document.getElementById('evtp').value='school';openOv('ov-ev');}
 function openEvMD(key){
   const p=key.split('-');
   const ds=p[0]+'-'+String(parseInt(p[1])+1).padStart(2,'0')+'-'+String(parseInt(p[2])).padStart(2,'0');
   openEvM();document.getElementById('evs').value=ds;document.getElementById('eve').value=ds;
 }
+function editEv(key,idx){
+  const ev=D.events[key][idx];if(!ev)return;
+  editEvKey=key;editEvIdx=idx;
+  const p=key.split('-');
+  const ds=p[0]+'-'+String(parseInt(p[1])+1).padStart(2,'0')+'-'+String(parseInt(p[2])).padStart(2,'0');
+  document.getElementById('evn').value=ev.name;
+  document.getElementById('evtp').value=ev.type;
+  document.getElementById('evnt').value=ev.note||'';
+  document.getElementById('evs').value=ds;document.getElementById('eve').value=ds;
+  openOv('ov-ev');
+}
 function saveEv(){
   const name=document.getElementById('evn').value.trim(),s=document.getElementById('evs').value,e=document.getElementById('eve').value,tp=document.getElementById('evtp').value,note=document.getElementById('evnt').value;
   if(!name||!s){toast('กรุณากรอกข้อมูลให้ครบ',false);return;}
+  if(editEvKey!==null){
+    D.events[editEvKey].splice(editEvIdx,1);
+    if(!D.events[editEvKey].length)delete D.events[editEvKey];
+  }
   const sd=new Date(s),ed=new Date(e||s);
   for(let dt=new Date(sd);dt<=ed;dt.setDate(dt.getDate()+1)){
     const k=ek(dt.getFullYear(),dt.getMonth(),dt.getDate());
     if(!D.events[k])D.events[k]=[];
     D.events[k].push({name,type:tp,note});
   }
-  save();closeOv('ov-ev');renderCal();toast('เพิ่มกิจกรรมแล้ว');
+  const wasEdit=editEvKey!==null;
+  editEvKey=null;editEvIdx=null;
+  save();closeOv('ov-ev');renderCal();renderSumPage();toast(wasEdit?'แก้ไขกิจกรรมแล้ว':'เพิ่มกิจกรรมแล้ว');
 }
 function monthDayCounts(y){
   // returns {monthIdx: {school,holiday,makeup,activity,total}} for given B.E. year (y = CE year)
@@ -875,7 +969,79 @@ function dlCalPDFDetail(){
   body+='<tr style="font-weight:700;background:#f5f5f5"><td>รวมทั้งปี</td><td>'+ts+'</td><td>'+th+'</td><td>'+tm+'</td><td>'+ta+'</td><td>'+(ts+th+tm+ta)+'</td></tr></table>';
   printHTML('ปฏิทินวิชาการ - ฉบับเต็ม',body);
 }
-function dlSumCSV(){dlCSV([['วันที่','รายการ','ประเภท'],['13 พ.ค. 2569','วันเปิดเทอม ภาคเรียนที่ 1','เปิดเทอม'],['24 มิ.ย. 2569','วันสุนทรภู่','กิจกรรม'],['20 ก.ค. 2569','วันอาสาฬหบูชา','วันหยุด'],['21 ก.ค. 2569','วันเรียนชดเชย','ชดเชย'],['12 ส.ค. 2569','วันแม่แห่งชาติ','วันหยุด'],['30 ก.ย. 2569','วันปิดเทอม ภาคเรียนที่ 1','ปิดเทอม']],'สรุปวันเรียน.csv');toast('ดาวน์โหลด Excel แล้ว');}
+function rangeDayCounts(startStr,endStr){
+  if(!startStr||!endStr)return{school:0,holiday:0,makeup:0,activity:0};
+  const sd=new Date(startStr+'T00:00:00'),ed=new Date(endStr+'T00:00:00');
+  let s=0,h=0,mk=0,ac=0;
+  for(let dt=new Date(sd);dt<=ed;dt.setDate(dt.getDate()+1)){
+    const key=ek(dt.getFullYear(),dt.getMonth(),dt.getDate()),isW=dt.getDay()===0||dt.getDay()===6;
+    if(D.events[key]&&D.events[key].length){
+      D.events[key].forEach(e=>{
+        if(e.type==='school')s++;else if(e.type==='holiday')h++;else if(e.type==='makeup')mk++;else if(e.type==='activity')ac++;
+      });
+    } else if(!isW)s++;
+  }
+  return{school:s,holiday:h,makeup:mk,activity:ac};
+}
+function yearEventRows(){
+  const s=D.settings;
+  const startStr=s.sem1s||(calY+'-01-01'),endStr=s.sem2e||(calY+'-12-31');
+  const sd=new Date(startStr+'T00:00:00'),ed=new Date(endStr+'T00:00:00');
+  const items=[];
+  Object.keys(D.events).forEach(k=>{
+    const p=k.split('-').map(Number),dt=new Date(p[0],p[1],p[2]);
+    if(dt<sd||dt>ed)return;
+    D.events[k].forEach(ev=>{if(ev.type!=='school')items.push({dt,name:ev.name,type:ev.type});});
+  });
+  items.sort((a,b)=>a.dt-b.dt);
+  return items;
+}
+function renderYearEventList(){
+  const lbl={holiday:'วันหยุด',makeup:'ชดเชย',activity:'กิจกรรม',open:'เปิดเทอม',close:'ปิดเทอม'};
+  const cls={holiday:'r',makeup:'o',activity:'g',open:'b',close:'b'};
+  const rows=yearEventRows();
+  const tb=document.getElementById('sum-ev-body');
+  if(!tb)return;
+  tb.innerHTML=rows.length?rows.map(r=>'<tr><td>'+thDate(r.dt)+'</td><td>'+r.name+'</td><td><span class="bdg '+(cls[r.type]||'gy')+'">'+(lbl[r.type]||r.type)+'</span></td></tr>').join(''):'<tr><td colspan="3" style="text-align:center;color:var(--gy);padding:16px">ยังไม่มีข้อมูล</td></tr>';
+}
+function renderSumPage(){
+  const s=D.settings,today=new Date();today.setHours(0,0,0,0);
+  const sem1=rangeDayCounts(s.sem1s,s.sem1e),sem2=rangeDayCounts(s.sem2s,s.sem2e);
+  const t1=parseInt(s.sem1t)||100,t2=parseInt(s.sem2t)||100;
+  const setTxt=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  setTxt('sum-yr',s.yr);
+  setTxt('sum-acc',sem1.school+sem2.school);
+  setTxt('sum-target',t1+t2);
+  setTxt('sum-remain',Math.max(t1+t2-(sem1.school+sem2.school),0));
+  setTxt('sum-hol',sem1.holiday+sem2.holiday);
+  const status=(a,b)=>{
+    if(!a||!b)return{lbl:'ยังไม่ตั้งค่า',cls:'gy'};
+    const sd=new Date(a+'T00:00:00'),ed=new Date(b+'T00:00:00');
+    if(today<sd)return{lbl:'ยังไม่เริ่ม',cls:'o'};
+    if(today>ed)return{lbl:'สิ้นสุดแล้ว',cls:'gy'};
+    return{lbl:'กำลังดำเนินการ',cls:'b'};
+  };
+  const fmtRange=(a,b)=>{if(!a||!b)return'ยังไม่กำหนด';const sd=new Date(a+'T00:00:00'),ed=new Date(b+'T00:00:00');return TM[sd.getMonth()]+' '+(sd.getFullYear()+543)+' – '+TM[ed.getMonth()]+' '+(ed.getFullYear()+543);};
+  const fmtDate=str=>str?thDate(new Date(str+'T00:00:00')):'-';
+  const st1=status(s.sem1s,s.sem1e),st2=status(s.sem2s,s.sem2e);
+  setTxt('sem1-lbl','ภาคเรียนที่ 1 ('+fmtRange(s.sem1s,s.sem1e)+')');
+  setTxt('sem1-dt','เปิด '+fmtDate(s.sem1s)+' | ปิด '+fmtDate(s.sem1e));
+  const b1=document.getElementById('sem1-bdg');if(b1){b1.textContent=st1.lbl;b1.className='bdg '+st1.cls;}
+  const pct1=t1?Math.min(Math.round(sem1.school/t1*100),100):0;
+  const bar1=document.getElementById('sem1-bar');if(bar1){bar1.style.width=pct1+'%';bar1.innerHTML='<span>'+sem1.school+'/'+t1+' วัน</span>';}
+  setTxt('sem2-lbl','ภาคเรียนที่ 2 ('+fmtRange(s.sem2s,s.sem2e)+')');
+  setTxt('sem2-dt','เปิด '+fmtDate(s.sem2s)+' | ปิด '+fmtDate(s.sem2e));
+  const b2=document.getElementById('sem2-bdg');if(b2){b2.textContent=st2.lbl;b2.className='bdg '+st2.cls;}
+  const pct2=t2?Math.min(Math.round(sem2.school/t2*100),100):0;
+  const bar2=document.getElementById('sem2-bar');if(bar2){bar2.style.width=pct2+'%';bar2.innerHTML='<span>'+sem2.school+'/'+t2+' วัน</span>';}
+  renderYearEventList();
+}
+function dlSumCSV(){
+  const lbl={holiday:'วันหยุด',makeup:'ชดเชย',activity:'กิจกรรม',open:'เปิดเทอม',close:'ปิดเทอม'};
+  const rows=[['วันที่','รายการ','ประเภท']];
+  yearEventRows().forEach(r=>rows.push([thDate(r.dt),r.name,lbl[r.type]||r.type]));
+  dlCSV(rows,'สรุปวันเรียน_ปีการศึกษา'+(D.settings.yr||'')+'.csv');toast('ดาวน์โหลด Excel แล้ว');
+}
 
 let sumSelY=new Date().getFullYear();
 function renderMonthSummary(){
@@ -1153,6 +1319,11 @@ document.getElementById('ss1').value=D.settings.s1;document.getElementById('ss2'
 document.getElementById('sn1').value=D.settings.n1;document.getElementById('sn2').value=D.settings.n2;
 document.getElementById('sper').value=D.settings.nper;document.getElementById('syr').value=D.settings.yr;
 document.getElementById('gcid').value=D.settings.gcid||'';document.getElementById('gkey').value=D.settings.gkey||'';
+document.getElementById('sem1s').value=D.settings.sem1s||'';document.getElementById('sem1e').value=D.settings.sem1e||'';
+document.getElementById('sem2s').value=D.settings.sem2s||'';document.getElementById('sem2e').value=D.settings.sem2e||'';
+document.getElementById('sem1t').value=D.settings.sem1t||100;document.getElementById('sem2t').value=D.settings.sem2t||100;
+syncSemesterEvents();
+renderSumPage();
 if(D.settings.gcid&&D.settings.gkey)initGapi();
 </script>
 </body>
