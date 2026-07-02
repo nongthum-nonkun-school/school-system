@@ -81,6 +81,10 @@ body{font-family:'Sarabun',sans-serif;background:#f0f2f5;font-size:13px;color:#2
 .dn{font-size:11px;font-weight:500}
 .evd{font-size:8px;margin-top:1px;padding:1px 3px;border-radius:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
 .es{background:#d5f5e3;color:#27500a}.eh{background:#fdedec;color:#791f1f}.em{background:#fef9e7;color:#633806}.ea{background:#d6eaf8;color:#0c447c}.eo{background:#1a5276;color:#fff}
+.evspan{box-sizing:border-box;font-weight:600;text-align:center}
+.evspan.sp-s{margin-right:-5px;padding-right:6px;border-radius:3px 0 0 3px}
+.evspan.sp-e{margin-left:-5px;padding-left:6px;border-radius:0 3px 3px 0}
+.evspan.sp-m{margin-left:-5px;margin-right:-5px;padding-left:6px;padding-right:6px;border-radius:0}
 /* YEAR VIEW */
 .ygrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:12px}
 .ymc{background:#fff;border-radius:10px;border:1px solid var(--bdr);padding:10px;cursor:pointer;transition:.15s}
@@ -295,6 +299,7 @@ body{font-family:'Sarabun',sans-serif;background:#f0f2f5;font-size:13px;color:#2
         <div class="fg"><label>รายละเอียด</label><textarea id="sub-d" rows="2" placeholder="คำอธิบายงาน..."></textarea></div>
         <div class="fg"><label>ผู้ส่ง</label><select id="sub-sdr"><option value="">-- เลือกชื่อผู้ส่ง --</option></select></div>
         <div class="fg"><label>กำหนดส่ง</label><input type="date" id="sub-due"></div>
+        <div id="flist-exist"></div>
         <div class="upz" id="upz" onclick="document.getElementById('fi').click()" ondragover="dov(event)" ondrop="droF(event)" ondragleave="dlv()">
           <i class="ti ti-cloud-upload" style="font-size:32px;color:var(--gy2);display:block;margin-bottom:6px"></i>
           <div style="font-size:12px;color:#666">คลิกหรือลากไฟล์มาวาง</div>
@@ -302,7 +307,7 @@ body{font-family:'Sarabun',sans-serif;background:#f0f2f5;font-size:13px;color:#2
         </div>
         <input type="file" id="fi" style="display:none" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg,.ppt,.pptx" onchange="hf(event)">
         <div id="flist"></div>
-        <div style="display:flex;gap:6px"><button class="btn p" style="flex:1" onclick="submitW()"><i class="ti ti-send"></i>ส่งงาน</button><button class="btn" onclick="clrSub()"><i class="ti ti-trash"></i>ล้าง</button></div>
+        <div style="display:flex;gap:6px"><button class="btn p" id="sub-btn" style="flex:1" onclick="submitW()"><i class="ti ti-send"></i>ส่งงาน</button><button class="btn" onclick="clrSub()"><i class="ti ti-trash"></i>ล้าง</button><button class="btn" id="sub-cancel" style="display:none" onclick="cancelEditSub()"><i class="ti ti-x"></i>ยกเลิกแก้ไข</button></div>
       </div></div>
     </div>
     <div>
@@ -588,47 +593,61 @@ function openSetModal(){
 // ═══════════════════════════════════════
 //  GOOGLE DRIVE
 // ═══════════════════════════════════════
-let driveOn=false,gToken=null,gapiOk=false;
+let driveOn=false,gToken=null,gapiOk=false,tokenClient=null;
 
 function initGapi(){
   const cid=D.settings.gcid,key=D.settings.gkey;
   if(!cid||!key)return;
+  // โหลด Google Identity Services (ไลบรารีใหม่ ใช้แทน gapi.auth2 ที่เลิกใช้แล้ว)
+  if(typeof google==='undefined'||!google.accounts||!google.accounts.oauth2){
+    const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';
+    s.onload=()=>setupTokenClient(cid);document.head.appendChild(s);
+  } else setupTokenClient(cid);
+  // โหลด gapi client แยกต่างหาก ใช้แค่เรียก Drive API (ไม่ใช้ auth2 module แล้ว)
   if(typeof gapi==='undefined'){
-    const s=document.createElement('script');s.src='https://apis.google.com/js/api.js';
-    s.onload=()=>gapiLoad(cid,key);document.head.appendChild(s);
-  } else gapiLoad(cid,key);
+    const s2=document.createElement('script');s2.src='https://apis.google.com/js/api.js';
+    s2.onload=()=>gapiClientLoad(key);document.head.appendChild(s2);
+  } else gapiClientLoad(key);
 }
-function gapiLoad(cid,key){
-  gapi.load('client:auth2',()=>{
-    gapi.client.init({apiKey:key,clientId:cid,scope:'https://www.googleapis.com/auth/drive.file',discoveryDocs:['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']})
-    .then(()=>{gapiOk=true;toast('Google Drive API พร้อมใช้งาน');})
+function gapiClientLoad(key){
+  gapi.load('client',()=>{
+    gapi.client.init({apiKey:key,discoveryDocs:['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']})
+    .then(()=>{gapiOk=true;})
     .catch(e=>{console.warn('GAPI err',e);});
   });
+}
+function setupTokenClient(cid){
+  tokenClient=google.accounts.oauth2.initTokenClient({
+    client_id:cid,
+    scope:'https://www.googleapis.com/auth/drive.file',
+    callback:(resp)=>{
+      if(resp.error){toast('ยกเลิกการเชื่อมต่อ',false);return;}
+      gToken=resp.access_token;driveOn=true;
+      document.getElementById('drive-btn').classList.add('drive-on');
+      document.getElementById('drive-lbl').textContent='Drive เชื่อมแล้ว ✓';
+      document.getElementById('drive-bar').className='ibar ok';
+      document.getElementById('drive-bar-txt').innerHTML='<b>เชื่อมต่อ Google Drive สำเร็จ!</b> ไฟล์ที่ส่งจะถูกอัปโหลดไปยัง Google Drive โดยอัตโนมัติ';
+      toast('เชื่อมต่อ Google Drive สำเร็จ!');
+    }
+  });
+  toast('Google Drive API พร้อมใช้งาน');
 }
 function driveTgl(){
   if(!D.settings.gcid){
     toast('กรุณาตั้งค่า Client ID ก่อน → กดปุ่ม "ตั้งค่า"',false);
     openSetModal();return;
   }
-  if(!gapiOk){initGapi();toast('กำลังเริ่มต้น Google API...');return;}
+  if(!tokenClient){initGapi();toast('กำลังเริ่มต้น Google API...');return;}
   if(!driveOn){
-    gapi.auth2.getAuthInstance().signIn().then(u=>{
-      gToken=u.getAuthResponse().access_token;driveOn=true;
-      document.getElementById('drive-btn').classList.add('drive-on');
-      document.getElementById('drive-lbl').textContent='Drive เชื่อมแล้ว ✓';
-      document.getElementById('drive-bar').className='ibar ok';
-      document.getElementById('drive-bar-txt').innerHTML='<b>เชื่อมต่อ Google Drive สำเร็จ!</b> ไฟล์ที่ส่งจะถูกอัปโหลดไปยัง Google Drive โดยอัตโนมัติ';
-      toast('เชื่อมต่อ Google Drive สำเร็จ!');
-    }).catch(()=>toast('ยกเลิกการเชื่อมต่อ',false));
+    tokenClient.requestAccessToken({prompt:'consent'});
   } else {
-    gapi.auth2.getAuthInstance().signOut().then(()=>{
-      driveOn=false;gToken=null;
-      document.getElementById('drive-btn').classList.remove('drive-on');
-      document.getElementById('drive-lbl').textContent='เชื่อม Drive';
-      document.getElementById('drive-bar').className='ibar warn';
-      document.getElementById('drive-bar-txt').textContent='ตัดการเชื่อมต่อ Google Drive แล้ว';
-      toast('ตัดการเชื่อมต่อแล้ว');
-    });
+    if(gToken)google.accounts.oauth2.revoke(gToken,()=>{});
+    driveOn=false;gToken=null;
+    document.getElementById('drive-btn').classList.remove('drive-on');
+    document.getElementById('drive-lbl').textContent='เชื่อม Drive';
+    document.getElementById('drive-bar').className='ibar warn';
+    document.getElementById('drive-bar-txt').textContent='ตัดการเชื่อมต่อ Google Drive แล้ว';
+    toast('ตัดการเชื่อมต่อแล้ว');
   }
 }
 async function driveUpload(file){
@@ -759,6 +778,19 @@ function ensureThaiHolidays(y){
 }
 
 function renderCal(){ensureThaiHolidays(calY);document.getElementById('ev-pnl').style.display='none';calV==='month'?renderMCal():renderYCal();}
+function evSpanInfo(y,m,d,ev){
+  // ตรวจว่ากิจกรรมนี้ต่อเนื่องกันหลายวันหรือไม่ (ชื่อ/ประเภท/หมายเหตุตรงกันในวันติดกัน)
+  const keyOf=dt=>ek(dt.getFullYear(),dt.getMonth(),dt.getDate());
+  const sameEv=k=>D.events[k]&&D.events[k].some(e=>e.name===ev.name&&e.type===ev.type&&(e.note||'')===(ev.note||''));
+  let sd=new Date(y,m,d),ed=new Date(y,m,d);
+  let p=new Date(sd);p.setDate(p.getDate()-1);
+  while(sameEv(keyOf(p))){sd=new Date(p);p.setDate(p.getDate()-1);}
+  let n=new Date(ed);n.setDate(n.getDate()+1);
+  while(sameEv(keyOf(n))){ed=new Date(n);n.setDate(n.getDate()+1);}
+  const spanDays=Math.round((ed-sd)/86400000)+1;
+  const idx=Math.round((new Date(y,m,d)-sd)/86400000);
+  return{spanDays,idx,isStart:idx===0,isEnd:idx===spanDays-1,isMid:idx===Math.floor((spanDays-1)/2)};
+}
 function renderMCal(){
   const b=document.getElementById('cal-body'),td=new Date();
   document.getElementById('cal-ttl').textContent=TM[calM]+' '+(calY+543);
@@ -773,7 +805,13 @@ function renderMCal(){
     if(D.events[key])D.events[key].forEach(e=>{
       const c=e.type==='holiday'?'eh':e.type==='makeup'?'em':e.type==='activity'?'ea':(e.type==='open'||e.type==='close')?'eo':'es';
       if(e.type==='school')s++;else if(e.type==='holiday')h++;else if(e.type==='makeup')mk++;else if(e.type==='activity'){ac++;s++;}
-      ev+='<span class="evd '+c+'">'+e.name+'</span>';
+      const sp=evSpanInfo(calY,calM,d,e);
+      if(sp.spanDays>1){
+        let cls='evd evspan '+c+(sp.isStart?' sp-s':sp.isEnd?' sp-e':' sp-m');
+        ev+='<span class="'+cls+'" title="'+e.name+'">'+(sp.isMid?e.name:'&nbsp;')+'</span>';
+      } else {
+        ev+='<span class="evd '+c+'">'+e.name+'</span>';
+      }
     });
     else if(!isW)s++;
     html+='<div class="cd'+(isT?' td':'')+'" onclick="selD('+calY+','+calM+','+d+')" data-dk="'+key+'"><div class="dn">'+d+'</div>'+ev+'</div>';
@@ -859,12 +897,20 @@ function saveEv(){
   editEvKey=null;editEvIdx=null;
   save();closeOv('ov-ev');renderCal();renderSumPage();toast(wasEdit?'แก้ไขกิจกรรมแล้ว':'เพิ่มกิจกรรมแล้ว');
 }
+function inSemRange(dt){
+  // true if dt falls within เปิดเทอม-ปิดเทอม ของเทอม 1 หรือเทอม 2 ตามที่ตั้งค่าไว้
+  const s=D.settings;
+  const inR=(a,b)=>{if(!a||!b)return false;const sd=new Date(a+'T00:00:00'),ed=new Date(b+'T00:00:00');return dt>=sd&&dt<=ed;};
+  return inR(s.sem1s,s.sem1e)||inR(s.sem2s,s.sem2e);
+}
 function monthStat(y,m){
   // note: 'activity' days are also counted as school days (students attend on activity days)
+  // นับเฉพาะวันที่อยู่ในช่วงเปิดเทอม-ปิดเทอมเท่านั้น วันอื่น ๆ (เช่น ช่วงปิดเทอมในเดือนพฤษภาคม) จะไม่ถูกนับ
   const days=new Date(y,m+1,0).getDate();
   let s=0,h=0,mk=0,ac=0;
   for(let d=1;d<=days;d++){
     const key=ek(y,m,d),dt=new Date(y,m,d),isW=dt.getDay()===0||dt.getDay()===6;
+    if(!inSemRange(dt))continue;
     if(D.events[key]&&D.events[key].length){
       D.events[key].forEach(e=>{
         if(e.type==='school')s++;else if(e.type==='holiday')h++;else if(e.type==='makeup')mk++;else if(e.type==='activity'){ac++;s++;}
@@ -1212,7 +1258,7 @@ function savePer(){
 // ═══════════════════════════════════════
 //  SUBMIT
 // ═══════════════════════════════════════
-let pendF=[];
+let pendF=[],editSubId=null,pendExistingFiles=[];
 function popSenders(){
   const sel=document.getElementById('sub-sdr');
   sel.innerHTML='<option value="">-- เลือกชื่อผู้ส่ง --</option>';
@@ -1230,7 +1276,36 @@ function addF(f){
   document.getElementById('flist').appendChild(el);
 }
 function rmF(idx){pendF[idx]=null;const el=document.getElementById('pf'+idx);if(el)el.remove();}
-function clrSub(){pendF=[];document.getElementById('flist').innerHTML='';['sub-t','sub-d','sub-due'].forEach(id=>document.getElementById(id).value='');document.getElementById('sub-sdr').value='';document.getElementById('fi').value='';}
+function clrSub(){
+  pendF=[];pendExistingFiles=[];editSubId=null;
+  document.getElementById('flist').innerHTML='';document.getElementById('flist-exist').innerHTML='';
+  ['sub-t','sub-d','sub-due'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('sub-sdr').value='';document.getElementById('fi').value='';
+  document.getElementById('sub-btn').innerHTML='<i class="ti ti-send"></i>ส่งงาน';
+  document.getElementById('sub-cancel').style.display='none';
+}
+function cancelEditSub(){clrSub();toast('ยกเลิกการแก้ไข');}
+function renderExistFiles(){
+  const el=document.getElementById('flist-exist');
+  if(!pendExistingFiles.length){el.innerHTML='';return;}
+  el.innerHTML='<div style="font-size:10px;color:var(--gy);margin-bottom:3px">ไฟล์แนบเดิม (แตะ ✕ เพื่อลบ):</div>'+pendExistingFiles.map((f,i)=>'<div class="fc"><i class="ti '+f.ic+'" style="color:var(--b);font-size:18px"></i><div style="flex:1"><div style="font-size:12px;font-weight:500">'+f.n+'</div><div style="font-size:10px;color:var(--gy)">'+f.s+'</div></div><span onclick="rmExistF('+i+')" style="cursor:pointer;color:var(--r);padding:4px"><i class="ti ti-x"></i></span></div>').join('');
+}
+function rmExistF(i){pendExistingFiles[i]=null;pendExistingFiles=pendExistingFiles.filter(Boolean);renderExistFiles();}
+function editSub(id){
+  const s=D.submissions.find(x=>x.id===id);if(!s)return;
+  editSubId=id;
+  document.getElementById('sub-t').value=s.ttl;
+  document.getElementById('sub-d').value=s.desc||'';
+  document.getElementById('sub-sdr').value=s.sndr;
+  document.getElementById('sub-due').value=s.due||'';
+  pendExistingFiles=s.files.map(f=>({...f}));
+  pendF=[];document.getElementById('flist').innerHTML='';document.getElementById('fi').value='';
+  renderExistFiles();
+  document.getElementById('sub-btn').innerHTML='<i class="ti ti-device-floppy"></i>บันทึกการแก้ไข';
+  document.getElementById('sub-cancel').style.display='inline-flex';
+  document.getElementById('pg-sub').scrollIntoView({behavior:'smooth',block:'start'});
+  toast('กำลังแก้ไขงาน: '+s.ttl);
+}
 
 async function submitW(){
   const ttl=document.getElementById('sub-t').value.trim();
@@ -1238,7 +1313,7 @@ async function submitW(){
   const files=pendF.filter(Boolean);
   if(!ttl){toast('กรุณาระบุชื่องาน',false);return;}
   if(!sndr){toast('กรุณาเลือกชื่อผู้ส่ง',false);return;}
-  if(!files.length){toast('กรุณาแนบไฟล์อย่างน้อย 1 ไฟล์',false);return;}
+  if(!files.length&&!pendExistingFiles.length){toast('กรุณาแนบไฟล์อย่างน้อย 1 ไฟล์',false);return;}
   toast('กำลังดำเนินการ...');
   const today=new Date(),fObjs=[];
   for(const f of files){
@@ -1251,16 +1326,26 @@ async function submitW(){
     }
     fObjs.push({n:f.name,s:(f.size/1024).toFixed(0)+' KB',ic:fIcon(f.name),url:localUrl,driveUrl,driveId});
   }
-  D.submissions.unshift({id:Date.now(),ttl,desc:document.getElementById('sub-d').value,sndr,due:document.getElementById('sub-due').value,files:fObjs,date:thDate(today),driveUsed:driveOn});
-  save();clrSub();renderHist();
-  toast(driveOn?'ส่งงานสำเร็จ! ✓ บันทึกใน Google Drive แล้ว':'ส่งงานสำเร็จ! (เก็บชั่วคราวในเบราว์เซอร์)');
+  const allFiles=[...pendExistingFiles,...fObjs];
+  if(editSubId){
+    const i=D.submissions.findIndex(x=>x.id===editSubId);
+    if(i>-1){
+      D.submissions[i]={...D.submissions[i],ttl,desc:document.getElementById('sub-d').value,sndr,due:document.getElementById('sub-due').value,files:allFiles,driveUsed:D.submissions[i].driveUsed||driveOn,editedAt:thDate(today)};
+    }
+    save();clrSub();renderHist();
+    toast('บันทึกการแก้ไขงานเรียบร้อย!');
+  } else {
+    D.submissions.unshift({id:Date.now(),ttl,desc:document.getElementById('sub-d').value,sndr,due:document.getElementById('sub-due').value,files:allFiles,date:thDate(today),driveUsed:driveOn});
+    save();clrSub();renderHist();
+    toast(driveOn?'ส่งงานสำเร็จ! ✓ บันทึกใน Google Drive แล้ว':'ส่งงานสำเร็จ! (เก็บชั่วคราวในเบราว์เซอร์)');
+  }
 }
 function renderHist(){
   const el=document.getElementById('sub-hist');
   if(!D.submissions.length){el.innerHTML='<div style="text-align:center;padding:30px;color:var(--gy)"><i class="ti ti-inbox" style="font-size:28px;display:block;margin-bottom:6px"></i>ยังไม่มีงานที่ส่ง</div>';return;}
-  el.innerHTML=D.submissions.map(s=>'<div class="subc"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:5px"><div><div style="font-size:13px;font-weight:600">'+s.ttl+'</div><div style="font-size:10px;color:var(--gy)"><i class="ti ti-user" style="font-size:9px"></i> '+s.sndr+' | '+s.date+(s.driveUsed?' <i class="ti ti-brand-google-drive" style="color:#34a853;font-size:10px"></i>':'')+'</div></div><div style="display:flex;gap:5px;align-items:center;flex-shrink:0"><span class="bdg g"><i class="ti ti-check" style="font-size:9px"></i> ส่งแล้ว</span><button class="btn r sm" onclick="delSub('+s.id+')"><i class="ti ti-trash"></i></button></div></div>'+(s.desc?'<div style="font-size:11px;color:#666;margin-bottom:5px">'+s.desc+'</div>':'')+'<div style="display:flex;flex-wrap:wrap;gap:5px">'+s.files.map(f=>'<a class="sf" href="'+(f.driveUrl||f.url||'#')+'" '+(f.driveUrl?'target="_blank"':'download="'+f.n+'"')+' title="'+(f.driveUrl?'เปิดใน Google Drive':'ดาวน์โหลดไฟล์')+'"><i class="ti '+f.ic+'"></i>'+f.n+(f.driveUrl?' <i class="ti ti-brand-google-drive" style="font-size:9px;color:#34a853"></i>':'<i class="ti ti-download" style="font-size:9px;opacity:.6"></i>')+'</a>').join('')+'</div>'+(s.due?'<div style="font-size:10px;color:var(--gy);margin-top:5px"><i class="ti ti-calendar" style="font-size:9px"></i> กำหนดส่ง: '+s.due+'</div>':'')+'</div>').join('');
+  el.innerHTML=D.submissions.map(s=>'<div class="subc"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:5px"><div><div style="font-size:13px;font-weight:600">'+s.ttl+'</div><div style="font-size:10px;color:var(--gy)"><i class="ti ti-user" style="font-size:9px"></i> '+s.sndr+' | '+s.date+(s.driveUsed?' <i class="ti ti-brand-google-drive" style="color:#34a853;font-size:10px"></i>':'')+(s.editedAt?' | <span style="color:var(--o)">แก้ไขล่าสุด '+s.editedAt+'</span>':'')+'</div></div><div style="display:flex;gap:5px;align-items:center;flex-shrink:0"><span class="bdg g"><i class="ti ti-check" style="font-size:9px"></i> ส่งแล้ว</span><button class="btn sm" onclick="editSub('+s.id+')"><i class="ti ti-edit"></i></button><button class="btn r sm" onclick="delSub('+s.id+')"><i class="ti ti-trash"></i></button></div></div>'+(s.desc?'<div style="font-size:11px;color:#666;margin-bottom:5px">'+s.desc+'</div>':'')+'<div style="display:flex;flex-wrap:wrap;gap:5px">'+s.files.map(f=>'<a class="sf" href="'+(f.driveUrl||f.url||'#')+'" '+(f.driveUrl?'target="_blank"':'download="'+f.n+'"')+' title="'+(f.driveUrl?'เปิดใน Google Drive':'ดาวน์โหลดไฟล์')+'"><i class="ti '+f.ic+'"></i>'+f.n+(f.driveUrl?' <i class="ti ti-brand-google-drive" style="font-size:9px;color:#34a853"></i>':'<i class="ti ti-download" style="font-size:9px;opacity:.6"></i>')+'</a>').join('')+'</div>'+(s.due?'<div style="font-size:10px;color:var(--gy);margin-top:5px"><i class="ti ti-calendar" style="font-size:9px"></i> กำหนดส่ง: '+s.due+'</div>':'')+'</div>').join('');
 }
-function delSub(id){if(!confirm('ยืนยันลบงานที่ส่ง?'))return;D.submissions=D.submissions.filter(s=>s.id!==id);save();renderHist();toast('ลบงานแล้ว');}
+function delSub(id){if(!confirm('ยืนยันลบงานที่ส่ง?'))return;D.submissions=D.submissions.filter(s=>s.id!==id);if(editSubId===id)clrSub();save();renderHist();toast('ลบงานแล้ว');}
 
 // ═══════════════════════════════════════
 //  RESOURCE LIBRARY (คลังทรัพยากรโรงเรียน)
