@@ -307,6 +307,13 @@ body{font-family:'Sarabun',sans-serif;background:#f0f2f5;font-size:13px;color:#2
         </div>
         <input type="file" id="fi" style="display:none" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg,.ppt,.pptx" onchange="hf(event)">
         <div id="flist"></div>
+        <div class="fg" style="margin-top:8px"><label>แนบลิงก์ (ถ้ามี เช่น Google Docs, YouTube)</label>
+          <div style="display:flex;gap:6px">
+            <input type="url" id="sub-link-in" placeholder="วางลิงก์ที่นี่..." style="flex:1" onkeydown="if(event.key==='Enter'){event.preventDefault();addLink();}">
+            <button class="btn" onclick="addLink()"><i class="ti ti-plus"></i></button>
+          </div>
+        </div>
+        <div id="linklist"></div>
         <div style="display:flex;gap:6px"><button class="btn p" id="sub-btn" style="flex:1" onclick="submitW()"><i class="ti ti-send"></i>ส่งงาน</button><button class="btn" onclick="clrSub()"><i class="ti ti-trash"></i>ล้าง</button><button class="btn" id="sub-cancel" style="display:none" onclick="cancelEditSub()"><i class="ti ti-x"></i>ยกเลิกแก้ไข</button></div>
       </div></div>
     </div>
@@ -545,7 +552,7 @@ function saveSet(){
   };
   syncSemesterEvents();
   applySettings();save();closeOv('ov-set');toast('บันทึกการตั้งค่าแล้ว');
-  if(D.settings.gcid)initGapi();
+  if(D.settings.gcid)initGapi(true);
 }
 function syncSemesterEvents(){
   // remove previously auto-generated open/close markers so dates never duplicate when changed
@@ -593,16 +600,16 @@ function openSetModal(){
 // ═══════════════════════════════════════
 //  GOOGLE DRIVE
 // ═══════════════════════════════════════
-let driveOn=false,gToken=null,gapiOk=false,tokenClient=null;
+let driveOn=false,gToken=null,gapiOk=false,tokenClient=null,tokenExpiryTs=0,refreshTimer=null;
 
-function initGapi(){
+function initGapi(silent){
   const cid=D.settings.gcid,key=D.settings.gkey;
   if(!cid||!key)return;
   // โหลด Google Identity Services (ไลบรารีใหม่ ใช้แทน gapi.auth2 ที่เลิกใช้แล้ว)
   if(typeof google==='undefined'||!google.accounts||!google.accounts.oauth2){
     const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';
-    s.onload=()=>setupTokenClient(cid);document.head.appendChild(s);
-  } else setupTokenClient(cid);
+    s.onload=()=>setupTokenClient(cid,silent);document.head.appendChild(s);
+  } else setupTokenClient(cid,silent);
   // โหลด gapi client แยกต่างหาก ใช้แค่เรียก Drive API (ไม่ใช้ auth2 module แล้ว)
   if(typeof gapi==='undefined'){
     const s2=document.createElement('script');s2.src='https://apis.google.com/js/api.js';
@@ -616,33 +623,51 @@ function gapiClientLoad(key){
     .catch(e=>{console.warn('GAPI err',e);});
   });
 }
-function setupTokenClient(cid){
+function scheduleRefresh(){
+  // ต่ออายุ token อัตโนมัติก่อนหมดอายุ ~5 นาที เพื่อให้เชื่อมต่อ Drive ค้างไว้ระหว่างใช้งาน
+  if(refreshTimer)clearTimeout(refreshTimer);
+  const msUntilRefresh=Math.max(tokenExpiryTs-Date.now()-5*60*1000,10000);
+  refreshTimer=setTimeout(()=>{if(tokenClient)tokenClient.requestAccessToken({prompt:''});},msUntilRefresh);
+}
+function setupTokenClient(cid,silent){
   tokenClient=google.accounts.oauth2.initTokenClient({
     client_id:cid,
     scope:'https://www.googleapis.com/auth/drive.file',
     callback:(resp)=>{
-      if(resp.error){toast('ยกเลิกการเชื่อมต่อ',false);return;}
+      if(resp.error){
+        if(!silent)toast('ยกเลิกการเชื่อมต่อ',false);
+        return;
+      }
       gToken=resp.access_token;driveOn=true;
+      const expiresIn=parseInt(resp.expires_in)||3500;
+      tokenExpiryTs=Date.now()+expiresIn*1000;
+      localStorage.setItem('driveConnected','1');
+      scheduleRefresh();
       document.getElementById('drive-btn').classList.add('drive-on');
       document.getElementById('drive-lbl').textContent='Drive เชื่อมแล้ว ✓';
       document.getElementById('drive-bar').className='ibar ok';
-      document.getElementById('drive-bar-txt').innerHTML='<b>เชื่อมต่อ Google Drive สำเร็จ!</b> ไฟล์ที่ส่งจะถูกอัปโหลดไปยัง Google Drive โดยอัตโนมัติ';
-      toast('เชื่อมต่อ Google Drive สำเร็จ!');
+      document.getElementById('drive-bar-txt').innerHTML='<b>เชื่อมต่อ Google Drive สำเร็จ!</b> ไฟล์ที่ส่งจะถูกอัปโหลดไปยัง Google Drive โดยอัตโนมัติ ครั้งต่อไปที่เปิดเว็บ ระบบจะพยายามเชื่อมต่อให้อัตโนมัติ';
+      if(!silent)toast('เชื่อมต่อ Google Drive สำเร็จ!');
     }
   });
-  toast('Google Drive API พร้อมใช้งาน');
+  if(!silent)toast('Google Drive API พร้อมใช้งาน');
+  // ถ้าเคยเชื่อมต่อสำเร็จมาก่อน ให้ลองเชื่อมต่อใหม่แบบเงียบๆ (ไม่เด้ง popup ถ้าไม่จำเป็น)
+  if(silent&&localStorage.getItem('driveConnected')==='1'){
+    tokenClient.requestAccessToken({prompt:''});
+  }
 }
 function driveTgl(){
   if(!D.settings.gcid){
     toast('กรุณาตั้งค่า Client ID ก่อน → กดปุ่ม "ตั้งค่า"',false);
     openSetModal();return;
   }
-  if(!tokenClient){initGapi();toast('กำลังเริ่มต้น Google API...');return;}
+  if(!tokenClient){initGapi(false);toast('กำลังเริ่มต้น Google API...');return;}
   if(!driveOn){
     tokenClient.requestAccessToken({prompt:'consent'});
   } else {
+    if(refreshTimer)clearTimeout(refreshTimer);
     if(gToken)google.accounts.oauth2.revoke(gToken,()=>{});
-    driveOn=false;gToken=null;
+    driveOn=false;gToken=null;localStorage.removeItem('driveConnected');
     document.getElementById('drive-btn').classList.remove('drive-on');
     document.getElementById('drive-lbl').textContent='เชื่อม Drive';
     document.getElementById('drive-bar').className='ibar warn';
@@ -660,6 +685,13 @@ async function driveUpload(file){
     const r=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink',{method:'POST',headers:{Authorization:'Bearer '+gToken},body:form});
     return await r.json();
   }catch(e){console.error('drive upload',e);return null;}
+}
+async function driveDeleteFile(fileId){
+  if(!driveOn||!gToken||!fileId)return false;
+  try{
+    const r=await fetch('https://www.googleapis.com/drive/v3/files/'+fileId,{method:'DELETE',headers:{Authorization:'Bearer '+gToken}});
+    return r.ok||r.status===204;
+  }catch(e){console.error('drive delete',e);return false;}
 }
 
 // ═══════════════════════════════════════
@@ -1258,7 +1290,7 @@ function savePer(){
 // ═══════════════════════════════════════
 //  SUBMIT
 // ═══════════════════════════════════════
-let pendF=[],editSubId=null,pendExistingFiles=[];
+let pendF=[],editSubId=null,pendExistingFiles=[],pendLinks=[];
 function popSenders(){
   const sel=document.getElementById('sub-sdr');
   sel.innerHTML='<option value="">-- เลือกชื่อผู้ส่ง --</option>';
@@ -1276,10 +1308,22 @@ function addF(f){
   document.getElementById('flist').appendChild(el);
 }
 function rmF(idx){pendF[idx]=null;const el=document.getElementById('pf'+idx);if(el)el.remove();}
+function addLink(){
+  const inp=document.getElementById('sub-link-in');
+  let url=inp.value.trim();
+  if(!url){toast('กรุณาวางลิงก์ก่อน',false);return;}
+  if(!/^https?:\/\//i.test(url))url='https://'+url;
+  pendLinks.push(url);inp.value='';renderLinkList();
+}
+function renderLinkList(){
+  const el=document.getElementById('linklist');
+  el.innerHTML=pendLinks.map((u,i)=>'<div class="fc"><i class="ti ti-link" style="color:var(--b);font-size:18px"></i><div style="flex:1"><div style="font-size:12px;font-weight:500;word-break:break-all">'+u+'</div></div><span onclick="rmLink('+i+')" style="cursor:pointer;color:var(--r);padding:4px"><i class="ti ti-x"></i></span></div>').join('');
+}
+function rmLink(i){pendLinks.splice(i,1);renderLinkList();}
 function clrSub(){
-  pendF=[];pendExistingFiles=[];editSubId=null;
-  document.getElementById('flist').innerHTML='';document.getElementById('flist-exist').innerHTML='';
-  ['sub-t','sub-d','sub-due'].forEach(id=>document.getElementById(id).value='');
+  pendF=[];pendExistingFiles=[];pendLinks=[];editSubId=null;
+  document.getElementById('flist').innerHTML='';document.getElementById('flist-exist').innerHTML='';document.getElementById('linklist').innerHTML='';
+  ['sub-t','sub-d','sub-due','sub-link-in'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('sub-sdr').value='';document.getElementById('fi').value='';
   document.getElementById('sub-btn').innerHTML='<i class="ti ti-send"></i>ส่งงาน';
   document.getElementById('sub-cancel').style.display='none';
@@ -1299,7 +1343,7 @@ function editSub(id){
   document.getElementById('sub-sdr').value=s.sndr;
   document.getElementById('sub-due').value=s.due||'';
   pendExistingFiles=s.files.map(f=>({...f}));
-  pendF=[];document.getElementById('flist').innerHTML='';document.getElementById('fi').value='';
+  pendF=[];pendLinks=[];document.getElementById('flist').innerHTML='';document.getElementById('fi').value='';document.getElementById('linklist').innerHTML='';
   renderExistFiles();
   document.getElementById('sub-btn').innerHTML='<i class="ti ti-device-floppy"></i>บันทึกการแก้ไข';
   document.getElementById('sub-cancel').style.display='inline-flex';
@@ -1313,7 +1357,7 @@ async function submitW(){
   const files=pendF.filter(Boolean);
   if(!ttl){toast('กรุณาระบุชื่องาน',false);return;}
   if(!sndr){toast('กรุณาเลือกชื่อผู้ส่ง',false);return;}
-  if(!files.length&&!pendExistingFiles.length){toast('กรุณาแนบไฟล์อย่างน้อย 1 ไฟล์',false);return;}
+  if(!files.length&&!pendExistingFiles.length&&!pendLinks.length){toast('กรุณาแนบไฟล์หรือวางลิงก์อย่างน้อย 1 รายการ',false);return;}
   toast('กำลังดำเนินการ...');
   const today=new Date(),fObjs=[];
   for(const f of files){
@@ -1326,7 +1370,8 @@ async function submitW(){
     }
     fObjs.push({n:f.name,s:(f.size/1024).toFixed(0)+' KB',ic:fIcon(f.name),url:localUrl,driveUrl,driveId});
   }
-  const allFiles=[...pendExistingFiles,...fObjs];
+  const linkObjs=pendLinks.map(u=>({n:u,s:'ลิงก์แนบ',ic:'ti-link',url:u,driveUrl:null,driveId:null,isLink:true}));
+  const allFiles=[...pendExistingFiles,...fObjs,...linkObjs];
   if(editSubId){
     const i=D.submissions.findIndex(x=>x.id===editSubId);
     if(i>-1){
@@ -1343,9 +1388,24 @@ async function submitW(){
 function renderHist(){
   const el=document.getElementById('sub-hist');
   if(!D.submissions.length){el.innerHTML='<div style="text-align:center;padding:30px;color:var(--gy)"><i class="ti ti-inbox" style="font-size:28px;display:block;margin-bottom:6px"></i>ยังไม่มีงานที่ส่ง</div>';return;}
-  el.innerHTML=D.submissions.map(s=>'<div class="subc"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:5px"><div><div style="font-size:13px;font-weight:600">'+s.ttl+'</div><div style="font-size:10px;color:var(--gy)"><i class="ti ti-user" style="font-size:9px"></i> '+s.sndr+' | '+s.date+(s.driveUsed?' <i class="ti ti-brand-google-drive" style="color:#34a853;font-size:10px"></i>':'')+(s.editedAt?' | <span style="color:var(--o)">แก้ไขล่าสุด '+s.editedAt+'</span>':'')+'</div></div><div style="display:flex;gap:5px;align-items:center;flex-shrink:0"><span class="bdg g"><i class="ti ti-check" style="font-size:9px"></i> ส่งแล้ว</span><button class="btn sm" onclick="editSub('+s.id+')"><i class="ti ti-edit"></i></button><button class="btn r sm" onclick="delSub('+s.id+')"><i class="ti ti-trash"></i></button></div></div>'+(s.desc?'<div style="font-size:11px;color:#666;margin-bottom:5px">'+s.desc+'</div>':'')+'<div style="display:flex;flex-wrap:wrap;gap:5px">'+s.files.map(f=>'<a class="sf" href="'+(f.driveUrl||f.url||'#')+'" '+(f.driveUrl?'target="_blank"':'download="'+f.n+'"')+' title="'+(f.driveUrl?'เปิดใน Google Drive':'ดาวน์โหลดไฟล์')+'"><i class="ti '+f.ic+'"></i>'+f.n+(f.driveUrl?' <i class="ti ti-brand-google-drive" style="font-size:9px;color:#34a853"></i>':'<i class="ti ti-download" style="font-size:9px;opacity:.6"></i>')+'</a>').join('')+'</div>'+(s.due?'<div style="font-size:10px;color:var(--gy);margin-top:5px"><i class="ti ti-calendar" style="font-size:9px"></i> กำหนดส่ง: '+s.due+'</div>':'')+'</div>').join('');
+  el.innerHTML=D.submissions.map(s=>'<div class="subc"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:5px"><div><div style="font-size:13px;font-weight:600">'+s.ttl+'</div><div style="font-size:10px;color:var(--gy)"><i class="ti ti-user" style="font-size:9px"></i> '+s.sndr+' | '+s.date+(s.driveUsed?' <i class="ti ti-brand-google-drive" style="color:#34a853;font-size:10px"></i>':'')+(s.editedAt?' | <span style="color:var(--o)">แก้ไขล่าสุด '+s.editedAt+'</span>':'')+'</div></div><div style="display:flex;gap:5px;align-items:center;flex-shrink:0"><span class="bdg g"><i class="ti ti-check" style="font-size:9px"></i> ส่งแล้ว</span><button class="btn sm" onclick="editSub('+s.id+')"><i class="ti ti-edit"></i></button><button class="btn r sm" onclick="delSub('+s.id+')"><i class="ti ti-trash"></i></button></div></div>'+(s.desc?'<div style="font-size:11px;color:#666;margin-bottom:5px">'+s.desc+'</div>':'')+'<div style="display:flex;flex-wrap:wrap;gap:5px">'+s.files.map(f=>'<a class="sf" href="'+(f.driveUrl||f.url||'#')+'" '+((f.driveUrl||f.isLink)?'target="_blank"':'download="'+f.n+'"')+' title="'+(f.isLink?'เปิดลิงก์':f.driveUrl?'เปิดใน Google Drive':'ดาวน์โหลดไฟล์')+'"><i class="ti '+f.ic+'"></i>'+(f.isLink?'ลิงก์แนบ':f.n)+(f.driveUrl?' <i class="ti ti-brand-google-drive" style="font-size:9px;color:#34a853"></i>':f.isLink?' <i class="ti ti-external-link" style="font-size:9px;opacity:.6"></i>':'<i class="ti ti-download" style="font-size:9px;opacity:.6"></i>')+'</a>').join('')+'</div>'+(s.due?'<div style="font-size:10px;color:var(--gy);margin-top:5px"><i class="ti ti-calendar" style="font-size:9px"></i> กำหนดส่ง: '+s.due+'</div>':'')+'</div>').join('');
 }
-function delSub(id){if(!confirm('ยืนยันลบงานที่ส่ง?'))return;D.submissions=D.submissions.filter(s=>s.id!==id);if(editSubId===id)clrSub();save();renderHist();toast('ลบงานแล้ว');}
+async function delSub(id){
+  const sub=D.submissions.find(x=>x.id===id);if(!sub)return;
+  const driveFileIds=sub.files.filter(f=>f.driveId).map(f=>f.driveId);
+  const msg=driveFileIds.length?'ยืนยันลบงานที่ส่ง? ไฟล์ที่เคยอัปโหลดขึ้น Google Drive จะถูกลบไปด้วย':'ยืนยันลบงานที่ส่ง?';
+  if(!confirm(msg))return;
+  if(driveFileIds.length){
+    if(driveOn){
+      toast('กำลังลบไฟล์ใน Google Drive...');
+      for(const fid of driveFileIds)await driveDeleteFile(fid);
+    } else {
+      toast('ยังไม่ได้เชื่อมต่อ Drive — ลบออกจากเว็บนี้เท่านั้น ไฟล์ใน Drive จะยังอยู่',false);
+    }
+  }
+  D.submissions=D.submissions.filter(s=>s.id!==id);if(editSubId===id)clrSub();save();renderHist();
+  toast('ลบงานแล้ว');
+}
 
 // ═══════════════════════════════════════
 //  RESOURCE LIBRARY (คลังทรัพยากรโรงเรียน)
@@ -1443,7 +1503,7 @@ document.getElementById('sem2s').value=D.settings.sem2s||'';document.getElementB
 document.getElementById('sem1t').value=D.settings.sem1t||100;document.getElementById('sem2t').value=D.settings.sem2t||100;
 syncSemesterEvents();
 renderSumPage();
-if(D.settings.gcid&&D.settings.gkey)initGapi();
+if(D.settings.gcid&&D.settings.gkey)initGapi(true);
 </script>
 </body>
 </html>
