@@ -178,7 +178,7 @@ body{font-family:'Sarabun',sans-serif;background:#f0f2f5;font-size:13px;color:#2
     </div>
     <div class="hdr-acts">
       <button class="hbtn" id="drive-btn" onclick="driveTgl()"><i class="ti ti-brand-google-drive"></i><span id="drive-lbl">เชื่อม Drive</span></button>
-      <button class="hbtn" onclick="openOv('ov-set')"><i class="ti ti-settings"></i><span>ตั้งค่า</span></button>
+      <button class="hbtn" onclick="openSetGated()"><i class="ti ti-settings"></i><span>ตั้งค่า</span></button>
     </div>
   </div>
   <nav class="nav">
@@ -268,11 +268,11 @@ body{font-family:'Sarabun',sans-serif;background:#f0f2f5;font-size:13px;color:#2
 
 <!-- SUMMARY -->
 <div class="pg" id="pg-sum">
-  <div style="font-size:14px;font-weight:600;color:var(--b);margin-bottom:12px;display:flex;align-items:center;gap:7px;justify-content:space-between"><span><i class="ti ti-clipboard-check"></i> สรุปวันเรียน ปีการศึกษา <span id="sum-yr">2569</span></span><button class="btn p sm" onclick="openSetModal()"><i class="ti ti-settings"></i>ตั้งค่าภาคเรียน</button></div>
+  <div style="font-size:14px;font-weight:600;color:var(--b);margin-bottom:12px;display:flex;align-items:center;gap:7px;justify-content:space-between"><span><i class="ti ti-clipboard-check"></i> สรุปวันเรียน ปีการศึกษา <span id="sum-yr">2569</span></span><button class="btn p sm" onclick="openSetGated()"><i class="ti ti-settings"></i>ตั้งค่าภาคเรียน</button></div>
   <div class="sb4"><div class="sbox"><div class="n" id="sum-acc">0</div><div class="l">วันเรียนสะสม</div></div><div class="sbox"><div class="n" id="sum-target" style="color:var(--g)">0</div><div class="l">เป้าหมายรวม</div></div><div class="sbox"><div class="n" id="sum-remain" style="color:var(--o)">0</div><div class="l">คงเหลือ</div></div><div class="sbox"><div class="n" id="sum-hol" style="color:var(--r)">0</div><div class="l">วันหยุดรวม</div></div></div>
   <div class="sem"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><div id="sem1-lbl" style="font-size:13px;font-weight:600;color:var(--b)">ภาคเรียนที่ 1</div><div id="sem1-dt" style="font-size:11px;color:var(--gy);margin-top:2px"></div></div><span class="bdg b" id="sem1-bdg">-</span></div><div class="pb"><div class="pf" id="sem1-bar" style="width:0%"><span></span></div></div></div>
   <div class="sem s2"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><div id="sem2-lbl" style="font-size:13px;font-weight:600;color:var(--g)">ภาคเรียนที่ 2</div><div id="sem2-dt" style="font-size:11px;color:var(--gy);margin-top:2px"></div></div><span class="bdg o" id="sem2-bdg">-</span></div><div class="pb"><div class="pf" id="sem2-bar" style="width:0%;background:var(--g)"><span></span></div></div></div>
-  <div class="card"><div class="ch"><h3><i class="ti ti-calendar-stats" style="color:var(--b)"></i>สรุปวันเรียนรายเดือน</h3><div style="display:flex;gap:6px;align-items:center"><span style="font-size:11px;color:var(--gy)">ปีการศึกษา</span><button class="btn sm" onclick="sumYrStep(-1)"><i class="ti ti-chevron-left"></i></button><input type="number" id="sum-yr-sel" onchange="sumYrChange()" style="border:1px solid var(--bdr);border-radius:8px;padding:5px 6px;font-size:12px;width:72px;text-align:center"><button class="btn sm" onclick="sumYrStep(1)"><i class="ti ti-chevron-right"></i></button><button class="btn g sm" onclick="dlMonthSumCSV()"><i class="ti ti-table"></i>Excel</button></div></div><div style="overflow-x:auto"><table class="tbl" id="month-sum-tbl"><thead><tr><th>เดือน</th><th>วันเรียน</th><th>วันหยุด</th><th>วันชดเชย</th><th>กิจกรรม</th><th>รวมวันเรียน</th></tr></thead><tbody id="month-sum-body"></tbody></table></div></div>
+  <div class="card"><div class="ch"><h3><i class="ti ti-calendar-stats" style="color:var(--b)"></i>สรุปวันเรียนรายเดือน</h3><div style="display:flex;gap:6px;align-items:center"><span style="font-size:11px;color:var(--gy)">ปีการศึกษา</span><button class="btn sm" onclick="sumYrStep(-1)"><i class="ti ti-chevron-left"></i></button><input type="number" id="sum-yr-sel" onchange="sumYrChange()" style="border:1px solid var(--bdr);border-radius:8px;padding:5px 6px;font-size:12px;width:72px;text-align:center"><button class="btn sm" onclick="sumYrStep(1)"><i class="ti ti-chevron-right"></i></button><button class="btn g sm" onclick="dlMonthSumCSV()"><i class="ti ti-table"></i>Excel</button></div></div><div style="font-size:10px;color:var(--gy);padding:0 14px 6px"><i class="ti ti-info-circle"></i> แตะตัวเลขในตารางเพื่อแก้ไขได้โดยตรง (เช่น กรณีนับเพิ่ม/ลดเอง) ค่าที่แก้จะถูกจำไว้ กดปุ่ม <i class="ti ti-refresh-dot"></i> เพื่อย้อนกลับเป็นค่าคำนวณอัตโนมัติจากปฏิทิน</div><div style="overflow-x:auto"><table class="tbl" id="month-sum-tbl"><thead><tr><th>เดือน</th><th>วันเรียน</th><th>วันหยุด</th><th>วันชดเชย</th><th>กิจกรรม</th><th>รวมวันเรียน</th><th></th></tr></thead><tbody id="month-sum-body"></tbody></table></div></div>
   <div class="card"><div class="ch"><h3><i class="ti ti-list" style="color:var(--b)"></i>วันหยุดและชดเชย (เชื่อมจากปฏิทินวิชาการ)</h3><button class="btn g sm" onclick="dlSumCSV()"><i class="ti ti-table"></i>ดาวน์โหลด Excel</button></div><div style="overflow-x:auto"><table class="tbl"><thead><tr><th>วันที่</th><th>รายการ</th><th>ประเภท</th></tr></thead><tbody id="sum-ev-body"></tbody></table></div></div>
 </div>
 
@@ -386,7 +386,30 @@ body{font-family:'Sarabun',sans-serif;background:#f0f2f5;font-size:13px;color:#2
     <div style="font-size:12px;font-weight:600;color:var(--b);margin-bottom:8px"><i class="ti ti-brand-google-drive"></i> ตั้งค่า Google Drive API</div>
     <div class="fg" style="margin-bottom:6px"><label>Client ID (จาก Google Cloud Console)</label><input type="text" id="gcid" placeholder="xxxxx.apps.googleusercontent.com"></div>
     <div class="fg" style="margin-bottom:0"><label>API Key</label><input type="text" id="gkey" placeholder="AIzaSy..."></div>
-    <div style="font-size:10px;color:var(--gy);margin-top:6px">วิธีรับ: <a href="https://console.cloud.google.com" target="_blank" style="color:var(--b)">console.cloud.google.com</a> → สร้าง Project → เปิด Drive API + Picker API → สร้าง OAuth 2.0 Client ID</div>
+    <div style="font-size:10px;color:var(--gy);margin-top:6px">วิธีรับ: <a href="https://console.cloud.google.com" target="_blank" style="color:var(--b)">console.cloud.google.com</a> → สร้าง Project → เปิด <b>Drive API</b> + <b>Google Sheets API</b> + Picker API → สร้าง OAuth 2.0 Client ID</div>
+  </div>
+  <!-- Sheets Sync Settings -->
+  <div style="background:#eafaf1;border-radius:8px;padding:12px;margin-bottom:10px">
+    <div style="font-size:12px;font-weight:600;color:#1a7a4c;margin-bottom:8px"><i class="ti ti-table"></i> ซิงก์ข้อมูลข้ามอุปกรณ์ (Google Sheets)</div>
+    <div class="fg" style="margin-bottom:6px"><label>Sheet ID (คัดลอกจาก URL ของ Google Sheet)</label><input type="text" id="sheetid" placeholder="เช่น 1AbCdEfGhIjKlMnOpQrStUvWxYz..."></div>
+    <div style="font-size:10px;color:var(--gy);margin-bottom:6px">สร้าง Google Sheet เปล่าๆ 1 แผ่น → คัดลอกส่วน ID จาก URL (ระหว่าง <code>/d/</code> กับ <code>/edit</code>) → วางที่นี่<br>
+    <b style="color:#1a7a4c">อยากให้คนอื่นดูข้อมูลได้โดยไม่ต้องล็อกอิน?</b> ไปที่ Google Sheet ที่สร้างไว้ → ปุ่ม "แชร์" (Share) → เปลี่ยนเป็น <b>"ทุกคนที่มีลิงก์" (Anyone with the link)</b> สิทธิ์ <b>"ผู้ดู" (Viewer)</b> — พอทำแบบนี้แล้ว ใครก็ตามที่เปิดเว็บนี้จะเห็นข้อมูลล่าสุดทันทีโดยไม่ต้องล็อกอิน Google เลย<br>
+    ⚠️ ข้อควรระวัง: การแชร์แบบ "ทุกคนที่มีลิงก์" หมายความว่าถ้ามีคนได้ลิงก์ Sheet ไป จะเปิดดูข้อมูลดิบทั้งหมดได้โดยตรงเช่นกัน ไม่ควรใช้ถ้ามีข้อมูลอ่อนไหว</div>
+    <button class="btn" style="width:100%" onclick="manualSyncSheets()"><i class="ti ti-refresh"></i> ซิงก์ข้อมูลตอนนี้</button>
+    <div id="sheets-sync-status" style="font-size:10px;color:var(--gy);margin-top:6px"></div>
+  </div>
+  <!-- Apps Script Proxy (let teachers submit/upload without their own Drive login) -->
+  <div style="background:#fff4e5;border-radius:8px;padding:12px;margin-bottom:10px">
+    <div style="font-size:12px;font-weight:600;color:#8a5a00;margin-bottom:8px"><i class="ti ti-plug-connected"></i> ให้ครูส่งงาน/อัปโหลดไฟล์ได้โดยไม่ต้องเชื่อม Drive เอง</div>
+    <div class="fg" style="margin-bottom:6px"><label>Apps Script Web App URL</label><input type="text" id="scripturl" placeholder="https://script.google.com/macros/s/xxxx/exec"></div>
+    <div style="font-size:10px;color:var(--gy)">ให้แอดมิน (คนเดียว) สร้าง Google Apps Script ผูกกับ Drive/Sheet ของตัวเอง แล้ว Deploy เป็น Web App (Execute as: Me, Who has access: Anyone) วาง URL ที่ได้ไว้ที่นี่ — เมื่อตั้งค่านี้แล้ว <b>ครูคนอื่นส่งงาน/อัปโหลดไฟล์ได้ทันทีโดยไม่ต้องกด "เชื่อม Drive" หรือมีบัญชี Google เลย</b> เพราะไฟล์และข้อมูลจะถูกบันทึกผ่านบัญชีของแอดมินที่ผูกไว้กับสคริปต์นี้แทน (ขอโค้ด Apps Script ที่ต้องใช้ได้จากแชทนี้)</div>
+  </div>
+  <!-- Admin password gate -->
+  <div style="background:#fdecea;border-radius:8px;padding:12px;margin-bottom:10px">
+    <div style="font-size:12px;font-weight:600;color:#a12b1f;margin-bottom:8px"><i class="ti ti-shield-lock"></i> รหัสผ่านแอดมิน</div>
+    <div class="fg" style="margin-bottom:6px"><label>ตั้ง/เปลี่ยนรหัสผ่านสำหรับเข้าหน้าตั้งค่า</label><input type="text" id="adminpass" placeholder="เว้นว่าง = ยังไม่ล็อก ใครก็เข้าตั้งค่าได้"></div>
+    <div style="font-size:10px;color:var(--gy)">ตั้งรหัสผ่านไว้ครั้งเดียว จะมีแค่คนที่รู้รหัสถึงเข้าหน้า "ตั้งค่า" นี้ได้ (เครื่องที่เคยใส่รหัสถูกแล้วจะจำไว้ให้ ไม่ต้องใส่ซ้ำทุกครั้ง) — เหมาะสำหรับแอดมินดูแลระบบหลังบ้าน ไม่ต้องพึ่งการเชื่อม Google Drive เพื่อพิสูจน์ตัวตนเลยก็ได้</div>
+    <button class="btn r" style="width:100%;margin-top:6px" onclick="logoutAdmin()"><i class="ti ti-logout"></i> ออกจากโหมดแอดมิน (เครื่องนี้)</button>
   </div>
   <div class="mbts"><button class="btn" onclick="closeOv('ov-set')">ยกเลิก</button><button class="btn p" onclick="saveSet()">บันทึก</button></div>
 </div></div>
@@ -443,7 +466,7 @@ const TM=['มกราคม','กุมภาพันธ์','มีนาค
 const DS=['อา','จ','อ','พ','พฤ','ศ','ส'];
 
 let D = {
-  settings:{s1:'โรงเรียนบ้านหนองทุ่มวิทยา',s2:'โรงเรียนโนนคูณอัมพวัน (เรียนรวม)',n1:42,n2:17,nper:10,yr:'2569',gcid:'',gkey:'',sem1s:'2026-05-13',sem1e:'2026-10-30',sem2s:'2026-11-02',sem2e:'2027-03-31',sem1t:100,sem2t:100},
+  settings:{s1:'โรงเรียนบ้านหนองทุ่มวิทยา',s2:'โรงเรียนโนนคูณอัมพวัน (เรียนรวม)',n1:42,n2:17,nper:10,yr:'2569',gcid:'',gkey:'',sheetId:'',scriptUrl:'',adminPass:'',sem1s:'2026-05-13',sem1e:'2026-10-30',sem2s:'2026-11-02',sem2e:'2027-03-31',sem1t:100,sem2t:100},
   events:{'2026-4-13':[{name:'วันเปิดเทอม ภาคเรียนที่ 1',type:'open'}],'2026-5-3':[{name:'วันฉัตรมงคล',type:'holiday'}],'2026-6-23':[{name:'วันสุนทรภู่',type:'activity'}],'2026-7-19':[{name:'วันอาสาฬหบูชา',type:'holiday'}],'2026-7-21':[{name:'วันเรียนชดเชย',type:'makeup'}],'2026-8-12':[{name:'วันแม่แห่งชาติ',type:'holiday'}],'2026-9-30':[{name:'วันปิดเทอม ภาคเรียนที่ 1',type:'close'}]},
   studentInfo:[],
   thHolYears:{},
@@ -461,6 +484,7 @@ let D = {
   ],
   submissions:[],
   portfolio:[],
+  monthOverrides:{},
   annCounter:10
 };
 
@@ -482,6 +506,7 @@ function save(){
       const ind=document.getElementById('sind');
       ind.classList.add('on');setTimeout(()=>ind.classList.remove('on'),1500);
     }catch(e){console.warn('save failed',e);}
+    if((driveOn||D.settings.scriptUrl)&&D.settings.sheetId)saveToSheets();
   },800);
 }
 
@@ -543,6 +568,9 @@ function saveSet(){
     yr:document.getElementById('syr').value.trim(),
     gcid:document.getElementById('gcid').value.trim(),
     gkey:document.getElementById('gkey').value.trim(),
+    sheetId:document.getElementById('sheetid').value.trim(),
+    scriptUrl:document.getElementById('scripturl').value.trim(),
+    adminPass:document.getElementById('adminpass').value,
     sem1s:document.getElementById('sem1s').value,
     sem1e:document.getElementById('sem1e').value,
     sem2s:document.getElementById('sem2s').value,
@@ -591,16 +619,49 @@ function openSetModal(){
   document.getElementById('sn1').value=s.n1;document.getElementById('sn2').value=s.n2;
   document.getElementById('sper').value=s.nper;document.getElementById('syr').value=s.yr;
   document.getElementById('gcid').value=s.gcid||'';document.getElementById('gkey').value=s.gkey||'';
+  document.getElementById('sheetid').value=s.sheetId||'';
+  document.getElementById('scripturl').value=s.scriptUrl||'';
+  document.getElementById('adminpass').value=s.adminPass||'';
   document.getElementById('sem1s').value=s.sem1s||'';document.getElementById('sem1e').value=s.sem1e||'';
   document.getElementById('sem2s').value=s.sem2s||'';document.getElementById('sem2e').value=s.sem2e||'';
   document.getElementById('sem1t').value=s.sem1t||100;document.getElementById('sem2t').value=s.sem2t||100;
   openOv('ov-set');
+}
+function openSetGated(){
+  // เข้าตั้งค่าได้เฉพาะแอดมิน — ถ้ายังไม่เคยตั้งรหัสผ่านไว้ อนุญาตให้เข้าไปตั้งได้เลย (ครั้งแรกเท่านั้น)
+  if(localStorage.getItem('isAdmin')==='1'||!D.settings.adminPass){openSetModal();return;}
+  const p=prompt('กรุณาใส่รหัสผ่านแอดมินเพื่อเข้าตั้งค่าระบบ:');
+  if(p===null)return;
+  if(p===D.settings.adminPass){localStorage.setItem('isAdmin','1');openSetModal();toast('เข้าสู่โหมดแอดมินแล้ว');}
+  else toast('รหัสผ่านไม่ถูกต้อง',false);
+}
+function logoutAdmin(){
+  localStorage.removeItem('isAdmin');
+  closeOv('ov-set');
+  toast('ออกจากโหมดแอดมินของเครื่องนี้แล้ว');
 }
 
 // ═══════════════════════════════════════
 //  GOOGLE DRIVE
 // ═══════════════════════════════════════
 let driveOn=false,gToken=null,gapiOk=false,tokenClient=null,tokenExpiryTs=0,refreshTimer=null;
+function canUpload(){return driveOn||!!D.settings.scriptUrl;}
+function fileToBase64(file){
+  return new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onload=()=>res(r.result.split(',')[1]);
+    r.onerror=rej;
+    r.readAsDataURL(file);
+  });
+}
+async function scriptCall(action,payload){
+  const url=D.settings.scriptUrl;
+  if(!url)return null;
+  try{
+    const r=await fetch(url,{method:'POST',body:JSON.stringify({action,...payload})});
+    return await r.json();
+  }catch(e){console.error('script call failed',e);return null;}
+}
 
 function initGapi(silent){
   const cid=D.settings.gcid,key=D.settings.gkey;
@@ -632,7 +693,7 @@ function scheduleRefresh(){
 function setupTokenClient(cid,silent){
   tokenClient=google.accounts.oauth2.initTokenClient({
     client_id:cid,
-    scope:'https://www.googleapis.com/auth/drive.file',
+    scope:'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets',
     callback:(resp)=>{
       if(resp.error){
         if(!silent)toast('ยกเลิกการเชื่อมต่อ',false);
@@ -648,6 +709,7 @@ function setupTokenClient(cid,silent){
       document.getElementById('drive-bar').className='ibar ok';
       document.getElementById('drive-bar-txt').innerHTML='<b>เชื่อมต่อ Google Drive สำเร็จ!</b> ไฟล์ที่ส่งจะถูกอัปโหลดไปยัง Google Drive โดยอัตโนมัติ ครั้งต่อไปที่เปิดเว็บ ระบบจะพยายามเชื่อมต่อให้อัตโนมัติ';
       if(!silent)toast('เชื่อมต่อ Google Drive สำเร็จ!');
+      if(D.settings.sheetId)loadFromSheets();
     }
   });
   if(!silent)toast('Google Drive API พร้อมใช้งาน');
@@ -659,7 +721,7 @@ function setupTokenClient(cid,silent){
 function driveTgl(){
   if(!D.settings.gcid){
     toast('กรุณาตั้งค่า Client ID ก่อน → กดปุ่ม "ตั้งค่า"',false);
-    openSetModal();return;
+    openSetGated();return;
   }
   if(!tokenClient){initGapi(false);toast('กำลังเริ่มต้น Google API...');return;}
   if(!driveOn){
@@ -676,6 +738,13 @@ function driveTgl(){
   }
 }
 async function driveUpload(file){
+  if(D.settings.scriptUrl){
+    try{
+      const b64=await fileToBase64(file);
+      const res=await scriptCall('uploadFile',{fileName:file.name,mimeType:file.type||'application/octet-stream',dataBase64:b64});
+      return (res&&res.id)?res:null;
+    }catch(e){console.error('script upload',e);return null;}
+  }
   if(!driveOn||!gToken)return null;
   try{
     const meta={name:file.name,mimeType:file.type||'application/octet-stream'};
@@ -687,11 +756,144 @@ async function driveUpload(file){
   }catch(e){console.error('drive upload',e);return null;}
 }
 async function driveDeleteFile(fileId){
-  if(!driveOn||!gToken||!fileId)return false;
+  if(!fileId)return false;
+  if(D.settings.scriptUrl){
+    const res=await scriptCall('deleteFile',{fileId});
+    return !!(res&&res.ok);
+  }
+  if(!driveOn||!gToken)return false;
   try{
     const r=await fetch('https://www.googleapis.com/drive/v3/files/'+fileId,{method:'DELETE',headers:{Authorization:'Bearer '+gToken}});
     return r.ok||r.status===204;
   }catch(e){console.error('drive delete',e);return false;}
+}
+
+// ═══════════════════════════════════════
+//  SHEETS SYNC (ใช้ Google Sheets เป็นฐานข้อมูลกลาง ให้ข้อมูล sync ข้ามอุปกรณ์)
+// ═══════════════════════════════════════
+const SYNC_SETTINGS_KEYS=['s1','s2','n1','n2','nper','yr','sem1s','sem1e','sem2s','sem2e','sem1t','sem2t'];
+const SYNC_NUM_KEYS=['n1','n2','nper','sem1t','sem2t'];
+function sheetsBase(){return 'https://sheets.googleapis.com/v4/spreadsheets/'+D.settings.sheetId;}
+function setSyncStatus(msg,ok=true){
+  const el=document.getElementById('sheets-sync-status');
+  if(el){el.textContent=msg;el.style.color=ok?'#1a7a4c':'var(--r)';}
+}
+async function sheetsFetch(path,opts={}){
+  if(!gToken)return null;
+  try{
+    const r=await fetch(sheetsBase()+path,{...opts,headers:{...(opts.headers||{}),Authorization:'Bearer '+gToken,'Content-Type':'application/json'}});
+    if(!r.ok){console.warn('sheets api err',r.status,await r.text());return null;}
+    return await r.json();
+  }catch(e){console.error('sheets fetch',e);return null;}
+}
+async function sheetsGetValues(range){
+  const d=await sheetsFetch('/values/'+encodeURIComponent(range));
+  return d&&d.values?d.values:[];
+}
+async function sheetsSetValues(range,values){
+  return sheetsFetch('/values/'+encodeURIComponent(range)+'?valueInputOption=RAW',{method:'PUT',body:JSON.stringify({values})});
+}
+async function sheetsClear(range){
+  return sheetsFetch('/values/'+encodeURIComponent(range)+':clear',{method:'POST',body:'{}'});
+}
+async function ensureSheetTabs(){
+  const meta=await sheetsFetch('?fields=sheets.properties.title');
+  if(!meta)return false;
+  const existing=(meta.sheets||[]).map(sh=>sh.properties.title);
+  const need=['Submissions','Events','Settings','MonthOverrides'].filter(t=>!existing.includes(t));
+  if(need.length){
+    await sheetsFetch(':batchUpdate',{method:'POST',body:JSON.stringify({requests:need.map(t=>({addSheet:{properties:{title:t}}}))})});
+  }
+  if(!existing.includes('Submissions'))await sheetsSetValues('Submissions!A1:I1',[['id','ttl','desc','sndr','due','date','driveUsed','editedAt','filesJSON']]);
+  if(!existing.includes('Events'))await sheetsSetValues('Events!A1:D1',[['dateKey','name','type','note']]);
+  if(!existing.includes('Settings'))await sheetsSetValues('Settings!A1:B1',[['key','value']]);
+  if(!existing.includes('MonthOverrides'))await sheetsSetValues('MonthOverrides!A1:E1',[['monthKey','school','holiday','makeup','activity']]);
+  return true;
+}
+function parseMonthOverrideRows(rows){
+  const mo={};
+  (rows||[]).forEach(r=>{
+    if(!r[0])return;
+    const o={};
+    if(r[1]!==undefined&&r[1]!=='')o.school=Number(r[1]);
+    if(r[2]!==undefined&&r[2]!=='')o.holiday=Number(r[2]);
+    if(r[3]!==undefined&&r[3]!=='')o.makeup=Number(r[3]);
+    if(r[4]!==undefined&&r[4]!=='')o.activity=Number(r[4]);
+    if(Object.keys(o).length)mo[r[0]]=o;
+  });
+  return mo;
+}
+async function loadFromSheets(){
+  if(!D.settings.sheetId||!driveOn)return false;
+  setSyncStatus('กำลังโหลดข้อมูลจาก Sheets...');
+  const ok=await ensureSheetTabs();
+  if(!ok){setSyncStatus('เชื่อมต่อ Sheets ไม่สำเร็จ (เช็ค Sheet ID และสิทธิ์การเข้าถึง)',false);return false;}
+  const subRows=await sheetsGetValues('Submissions!A2:I100000');
+  const evRows=await sheetsGetValues('Events!A2:D100000');
+  const setRows=await sheetsGetValues('Settings!A2:B1000');
+  const moRows=await sheetsGetValues('MonthOverrides!A2:E1000');
+  if(subRows.length){
+    D.submissions=subRows.filter(r=>r[0]).map(r=>({
+      id:isNaN(r[0])?r[0]:Number(r[0]),ttl:r[1]||'',desc:r[2]||'',sndr:r[3]||'',due:r[4]||'',date:r[5]||'',
+      driveUsed:r[6]==='1',editedAt:r[7]||'',
+      files:(()=>{try{return JSON.parse(r[8]||'[]');}catch(e){return[];}})()
+    }));
+  }
+  if(evRows.length){
+    const ev={};
+    evRows.forEach(r=>{if(!r[0])return;if(!ev[r[0]])ev[r[0]]=[];ev[r[0]].push({name:r[1]||'',type:r[2]||'school',note:r[3]||''});});
+    D.events=ev;
+  }
+  if(setRows.length){
+    setRows.forEach(r=>{
+      if(r[0]&&SYNC_SETTINGS_KEYS.includes(r[0])){
+        D.settings[r[0]]=SYNC_NUM_KEYS.includes(r[0])?(Number(r[1])||0):(r[1]||'');
+      }
+    });
+  }
+  D.monthOverrides=parseMonthOverrideRows(moRows);
+  save();refreshAllUI();
+  setSyncStatus('ซิงก์ข้อมูลล่าสุดสำเร็จ ✓');
+  return true;
+}
+async function saveToSheets(){
+  if(!D.settings.sheetId)return;
+  const subRows=D.submissions.map(s=>[s.id,s.ttl,s.desc||'',s.sndr,s.due||'',s.date,s.driveUsed?'1':'0',s.editedAt||'',JSON.stringify(s.files||[])]);
+  const evRows=[];
+  Object.keys(D.events).forEach(k=>{(D.events[k]||[]).forEach(e=>evRows.push([k,e.name,e.type,e.note||'']));});
+  const setRows=SYNC_SETTINGS_KEYS.map(k=>[k,String(D.settings[k]??'')]);
+  const moRows=Object.keys(D.monthOverrides).map(k=>{const o=D.monthOverrides[k];return[k,o.school??'',o.holiday??'',o.makeup??'',o.activity??''];});
+  if(D.settings.scriptUrl){
+    setSyncStatus('บันทึกผ่าน Apps Script...');
+    const res=await scriptCall('saveAll',{sheetId:D.settings.sheetId,submissions:subRows,events:evRows,settings:setRows,monthOverrides:moRows});
+    setSyncStatus(res&&res.ok?'บันทึกขึ้น Sheets ล่าสุดสำเร็จ ✓':'บันทึกขึ้น Sheets ไม่สำเร็จ (เช็ค Apps Script URL)',!!(res&&res.ok));
+    return;
+  }
+  if(!driveOn||!gToken)return;
+  try{
+    const ok=await ensureSheetTabs();if(!ok)return;
+    await sheetsClear('Submissions!A2:Z1000000');
+    if(subRows.length)await sheetsSetValues('Submissions!A2',subRows);
+    await sheetsClear('Events!A2:Z1000000');
+    if(evRows.length)await sheetsSetValues('Events!A2',evRows);
+    await sheetsClear('Settings!A2:Z1000');
+    await sheetsSetValues('Settings!A2',setRows);
+    await sheetsClear('MonthOverrides!A2:Z100000');
+    if(moRows.length)await sheetsSetValues('MonthOverrides!A2',moRows);
+    setSyncStatus('บันทึกขึ้น Sheets ล่าสุดสำเร็จ ✓');
+  }catch(e){console.error('saveToSheets',e);setSyncStatus('บันทึกขึ้น Sheets ไม่สำเร็จ',false);}
+}
+function refreshAllUI(){
+  applySettings();initCS();renderCal();renderHist();popSenders();renderSumPage();renderMonthSummary();
+  if(document.getElementById('ov-set').classList.contains('on'))openSetModal();
+}
+async function manualSyncSheets(){
+  const sid=document.getElementById('sheetid').value.trim();
+  if(!sid){toast('กรุณาใส่ Sheet ID ก่อน',false);return;}
+  D.settings.sheetId=sid;save();
+  if(!driveOn){toast('กรุณาเชื่อม Drive ก่อน (ปุ่มที่แถบเมนูบน)',false);setSyncStatus('ยังไม่ได้เชื่อมต่อ Drive',false);return;}
+  await loadFromSheets();
+  toast('ซิงก์ข้อมูลเรียบร้อย!');
 }
 
 // ═══════════════════════════════════════
@@ -976,14 +1178,35 @@ function academicMonths(beYear){
   }
   return months;
 }
+function moKey(y,m){return y+'-'+m;}
 function academicMonthDayCounts(beYear){
   const months=academicMonths(beYear);
   const years=[...new Set(months.map(x=>x.y))];
   years.forEach(y=>ensureThaiHolidays(y));
   return months.map(({y,m})=>{
     const st=monthStat(y,m);
-    return{y,m,school:st.school,holiday:st.holiday,makeup:st.makeup,activity:st.activity};
+    const ov=D.monthOverrides[moKey(y,m)]||{};
+    return{
+      y,m,
+      school:ov.school!=null?ov.school:st.school,
+      holiday:ov.holiday!=null?ov.holiday:st.holiday,
+      makeup:ov.makeup!=null?ov.makeup:st.makeup,
+      activity:ov.activity!=null?ov.activity:st.activity,
+      ov
+    };
   });
+}
+function setMonthOverride(y,m,field,val){
+  const key=moKey(y,m);
+  const n=parseInt(val);
+  if(!D.monthOverrides[key])D.monthOverrides[key]={};
+  if(isNaN(n)||n<0)delete D.monthOverrides[key][field];else D.monthOverrides[key][field]=n;
+  if(!Object.keys(D.monthOverrides[key]).length)delete D.monthOverrides[key];
+  save();renderMonthSummary();
+}
+function resetMonthOverride(y,m){
+  delete D.monthOverrides[moKey(y,m)];
+  save();renderMonthSummary();toast('รีเซ็ตค่าเดือนนี้กลับเป็นค่าคำนวณอัตโนมัติแล้ว');
 }
 function buildCalGridHTML(y){
   let html='<div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px">';
@@ -1166,11 +1389,22 @@ function renderMonthSummary(){
   document.getElementById('sum-yr-sel').value=sumSelBE;
   const body=document.getElementById('month-sum-body');
   let html='',ts=0,th=0,tm=0,ta=0;
+  const cell=(y,m,field,val,isOv,color)=>{
+    const style=isOv?'border:1.5px solid var(--o);background:#fff8ec;':'border:1px solid transparent;';
+    return '<input type="number" min="0" value="'+val+'" onchange="setMonthOverride('+y+','+m+',\''+field+'\',this.value)" style="width:52px;padding:3px 4px;border-radius:5px;text-align:center;font-size:12px;'+style+(color?'color:'+color+';':'')+'">';
+  };
   academicMonthDayCounts(sumSelBE).forEach(r=>{
     ts+=r.school;th+=r.holiday;tm+=r.makeup;ta+=r.activity;
-    html+='<tr><td>'+TM[r.m]+' '+(r.y+543)+'</td><td>'+r.school+'</td><td><span style="color:var(--r)">'+r.holiday+'</span></td><td><span style="color:var(--o)">'+r.makeup+'</span></td><td><span style="color:var(--g)">'+r.activity+'</span></td><td style="font-weight:600">'+r.school+'</td></tr>';
+    const anyOv=Object.keys(r.ov||{}).length>0;
+    html+='<tr'+(anyOv?' style="background:#fffaf0"':'')+'><td>'+TM[r.m]+' '+(r.y+543)+(anyOv?' <i class="ti ti-pencil" title="มีการแก้ไขค่าด้วยตนเอง" style="color:var(--o);font-size:11px"></i>':'')+'</td>'
+      +'<td>'+cell(r.y,r.m,'school',r.school,r.ov.school!=null)+'</td>'
+      +'<td>'+cell(r.y,r.m,'holiday',r.holiday,r.ov.holiday!=null,'var(--r)')+'</td>'
+      +'<td>'+cell(r.y,r.m,'makeup',r.makeup,r.ov.makeup!=null,'var(--o)')+'</td>'
+      +'<td>'+cell(r.y,r.m,'activity',r.activity,r.ov.activity!=null,'var(--g)')+'</td>'
+      +'<td style="font-weight:600">'+r.school+'</td>'
+      +'<td>'+(anyOv?'<button class="btn sm" title="รีเซ็ตกลับเป็นค่าอัตโนมัติ" onclick="resetMonthOverride('+r.y+','+r.m+')"><i class="ti ti-refresh-dot"></i></button>':'')+'</td></tr>';
   });
-  html+='<tr style="font-weight:700;background:var(--b4)"><td>รวมทั้งปีการศึกษา</td><td>'+ts+'</td><td>'+th+'</td><td>'+tm+'</td><td>'+ta+'</td><td>'+ts+'</td></tr>';
+  html+='<tr style="font-weight:700;background:var(--b4)"><td>รวมทั้งปีการศึกษา</td><td>'+ts+'</td><td>'+th+'</td><td>'+tm+'</td><td>'+ta+'</td><td>'+ts+'</td><td></td></tr>';
   body.innerHTML=html;
 }
 function dlMonthSumCSV(){
@@ -1359,11 +1593,12 @@ async function submitW(){
   if(!sndr){toast('กรุณาเลือกชื่อผู้ส่ง',false);return;}
   if(!files.length&&!pendExistingFiles.length&&!pendLinks.length){toast('กรุณาแนบไฟล์หรือวางลิงก์อย่างน้อย 1 รายการ',false);return;}
   toast('กำลังดำเนินการ...');
+  const up=canUpload();
   const today=new Date(),fObjs=[];
   for(const f of files){
     const localUrl=URL.createObjectURL(f);
     let driveUrl=null,driveId=null;
-    if(driveOn){
+    if(up){
       toast('อัปโหลด '+f.name+' → Google Drive...');
       const res=await driveUpload(f);
       if(res&&res.webViewLink){driveUrl=res.webViewLink;driveId=res.id;}
@@ -1375,14 +1610,14 @@ async function submitW(){
   if(editSubId){
     const i=D.submissions.findIndex(x=>x.id===editSubId);
     if(i>-1){
-      D.submissions[i]={...D.submissions[i],ttl,desc:document.getElementById('sub-d').value,sndr,due:document.getElementById('sub-due').value,files:allFiles,driveUsed:D.submissions[i].driveUsed||driveOn,editedAt:thDate(today)};
+      D.submissions[i]={...D.submissions[i],ttl,desc:document.getElementById('sub-d').value,sndr,due:document.getElementById('sub-due').value,files:allFiles,driveUsed:D.submissions[i].driveUsed||up,editedAt:thDate(today)};
     }
     save();clrSub();renderHist();
     toast('บันทึกการแก้ไขงานเรียบร้อย!');
   } else {
-    D.submissions.unshift({id:Date.now(),ttl,desc:document.getElementById('sub-d').value,sndr,due:document.getElementById('sub-due').value,files:allFiles,date:thDate(today),driveUsed:driveOn});
+    D.submissions.unshift({id:Date.now(),ttl,desc:document.getElementById('sub-d').value,sndr,due:document.getElementById('sub-due').value,files:allFiles,date:thDate(today),driveUsed:up});
     save();clrSub();renderHist();
-    toast(driveOn?'ส่งงานสำเร็จ! ✓ บันทึกใน Google Drive แล้ว':'ส่งงานสำเร็จ! (เก็บชั่วคราวในเบราว์เซอร์)');
+    toast(up?'ส่งงานสำเร็จ! ✓ บันทึกใน Google Drive แล้ว':'ส่งงานสำเร็จ! (เก็บชั่วคราวในเบราว์เซอร์)');
   }
 }
 function renderHist(){
@@ -1396,7 +1631,7 @@ async function delSub(id){
   const msg=driveFileIds.length?'ยืนยันลบงานที่ส่ง? ไฟล์ที่เคยอัปโหลดขึ้น Google Drive จะถูกลบไปด้วย':'ยืนยันลบงานที่ส่ง?';
   if(!confirm(msg))return;
   if(driveFileIds.length){
-    if(driveOn){
+    if(canUpload()){
       toast('กำลังลบไฟล์ใน Google Drive...');
       for(const fid of driveFileIds)await driveDeleteFile(fid);
     } else {
@@ -1498,12 +1733,51 @@ document.getElementById('ss1').value=D.settings.s1;document.getElementById('ss2'
 document.getElementById('sn1').value=D.settings.n1;document.getElementById('sn2').value=D.settings.n2;
 document.getElementById('sper').value=D.settings.nper;document.getElementById('syr').value=D.settings.yr;
 document.getElementById('gcid').value=D.settings.gcid||'';document.getElementById('gkey').value=D.settings.gkey||'';
+document.getElementById('sheetid').value=D.settings.sheetId||'';
 document.getElementById('sem1s').value=D.settings.sem1s||'';document.getElementById('sem1e').value=D.settings.sem1e||'';
 document.getElementById('sem2s').value=D.settings.sem2s||'';document.getElementById('sem2e').value=D.settings.sem2e||'';
 document.getElementById('sem1t').value=D.settings.sem1t||100;document.getElementById('sem2t').value=D.settings.sem2t||100;
 syncSemesterEvents();
 renderSumPage();
+async function sheetsPublicGetValues(range){
+  // อ่านข้อมูลด้วย API Key เท่านั้น (ไม่ต้องล็อกอิน) ใช้ได้เมื่อชีตถูกแชร์เป็น "ทุกคนที่มีลิงก์ - ผู้ดู"
+  const key=D.settings.gkey,sid=D.settings.sheetId;
+  if(!key||!sid)return [];
+  try{
+    const r=await fetch('https://sheets.googleapis.com/v4/spreadsheets/'+sid+'/values/'+encodeURIComponent(range)+'?key='+key);
+    if(!r.ok)return [];
+    const d=await r.json();
+    return d.values||[];
+  }catch(e){console.warn('public sheets fetch failed',e);return [];}
+}
+async function loadFromSheetsPublic(){
+  if(!D.settings.gkey||!D.settings.sheetId||driveOn)return false; // ถ้าเชื่อม Drive อยู่แล้วให้ loadFromSheets (แบบล็อกอิน) จัดการแทน
+  const subRows=await sheetsPublicGetValues('Submissions!A2:I100000');
+  const evRows=await sheetsPublicGetValues('Events!A2:D100000');
+  const setRows=await sheetsPublicGetValues('Settings!A2:B1000');
+  const moRows=await sheetsPublicGetValues('MonthOverrides!A2:E1000');
+  if(!subRows.length&&!evRows.length&&!setRows.length&&!moRows.length)return false;
+  if(subRows.length){
+    D.submissions=subRows.filter(r=>r[0]).map(r=>({
+      id:isNaN(r[0])?r[0]:Number(r[0]),ttl:r[1]||'',desc:r[2]||'',sndr:r[3]||'',due:r[4]||'',date:r[5]||'',
+      driveUsed:r[6]==='1',editedAt:r[7]||'',
+      files:(()=>{try{return JSON.parse(r[8]||'[]');}catch(e){return[];}})()
+    }));
+  }
+  if(evRows.length){
+    const ev={};
+    evRows.forEach(r=>{if(!r[0])return;if(!ev[r[0]])ev[r[0]]=[];ev[r[0]].push({name:r[1]||'',type:r[2]||'school',note:r[3]||''});});
+    D.events=ev;
+  }
+  if(setRows.length){
+    setRows.forEach(r=>{if(r[0]&&SYNC_SETTINGS_KEYS.includes(r[0])){D.settings[r[0]]=SYNC_NUM_KEYS.includes(r[0])?(Number(r[1])||0):(r[1]||'');}});
+  }
+  D.monthOverrides=parseMonthOverrideRows(moRows);
+  save();refreshAllUI();
+  return true;
+}
 if(D.settings.gcid&&D.settings.gkey)initGapi(true);
+if(D.settings.gkey&&D.settings.sheetId)loadFromSheetsPublic();
 </script>
 </body>
 </html>
